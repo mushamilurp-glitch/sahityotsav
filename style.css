@@ -1,0 +1,32 @@
+body {
+    margin: 0;
+    font-family: Arial;
+    background: #111;
+    color: white;
+  }
+  
+  nav {
+    display: flex;
+    justify-content: space-between;
+    padding: 15px;
+    background: black;
+  }
+  
+  nav ul {
+    display: flex;
+    list-style: none;
+  }
+  
+  nav ul li {
+    margin: 0 10px;
+  }
+  
+  nav a {
+    color: white;
+    text-decoration: none;
+  }
+  
+  .hero {
+    text-align: center;
+    margin-top: 100px;
+  }
