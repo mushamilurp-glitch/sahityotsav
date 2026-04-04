@@ -1,39 +1,88 @@
 body {
-    margin: 0;
-    font-family: Arial;
-    background: #111;
-    color: white;
-  }
-  
-  nav {
-    display: flex;
-    justify-content: space-between;
-    padding: 15px;
-    background: black;
-  }
-  
-  nav ul {
-    display: flex;
-    list-style: none;
-  }
-  
-  nav ul li {
-    margin: 0 10px;
-  }
-  
-  nav a {
-    color: white;
-    text-decoration: none;
-  }
-  
-  .hero {
-    text-align: center;
-    margin-top: 100px;
-  }
-  .results-container {
+  margin: 0;
+  font-family: 'Poppins', sans-serif;
+  background: #0a0a0a;
+  color: white;
+}
+
+/* NAVBAR */
+.navbar {
   display: flex;
-  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: center;
+  padding: 15px 30px;
+  background: rgba(0,0,0,0.8);
+}
+
+.logo {
+  height: 50px;
+}
+
+.navbar ul {
+  display: flex;
+  list-style: none;
+}
+
+.navbar ul li {
+  margin-left: 20px;
+}
+
+.navbar a {
+  color: white;
+  text-decoration: none;
+  transition: 0.3s;
+}
+
+.navbar a:hover {
+  color: gold;
+}
+
+/* HERO */
+.hero {
+  height: 90vh;
+  background: url('https://images.unsplash.com/photo-1514525253161-7a46d19cd819') no-repeat center/cover;
+  display: flex;
+  align-items: center;
   justify-content: center;
+}
+
+.overlay {
+  text-align: center;
+  background: rgba(0,0,0,0.6);
+  padding: 40px;
+  border-radius: 10px;
+}
+
+.overlay h1 {
+  font-size: 2rem;
+}
+
+.overlay h2 {
+  font-size: 3rem;
+  color: gold;
+}
+
+/* ABOUT */
+.about {
+  padding: 50px;
+  text-align: center;
+}
+
+/* QUICK LINKS */
+.quick-links {
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+  padding: 30px;
+}
+
+.quick-links a {
+  background: gold;
+  color: black;
+  padding: 15px 25px;
+  border-radius: 8px;
+  text-decoration: none;
+  font-weight: bold;
 }
 
 .card {

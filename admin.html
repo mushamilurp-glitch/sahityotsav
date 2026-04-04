@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Admin Panel</title>
+</head>
+<body>
+
+<h1>Admin Panel</h1>
+
+<!-- ================= RESULTS SECTION ================= -->
+<h2>Add Competition Result</h2>
+
+<select id="category">
+  <option>LP</option>
+  <option>UP</option>
+  <option>HS</option>
+  <option>HSS</option>
+  <option>Junior</option>
+  <option>Senior</option>
+  <option>General</option>
+</select><br><br>
+
+<input id="competition" placeholder="Competition Name"><br><br>
+
+<input id="first_name" placeholder="1st Participant"><br><br>
+<input id="first_team" placeholder="1st Team"><br><br>
+
+<input id="second_name" placeholder="2nd Participant"><br><br>
+<input id="second_team" placeholder="2nd Team"><br><br>
+
+<input id="third_name" placeholder="3rd Participant"><br><br>
+<input id="third_team" placeholder="3rd Team"><br><br>
+
+<button onclick="addResult()">Add Result</button>
+
+<hr>
+
+<!-- ================= LEADERBOARD SECTION ================= -->
+<h2>Update Leaderboard</h2>
+
+<select id="teamSelect">
+  <option>Team A</option>
+  <option>Team B</option>
+  <option>Team C</option>
+</select><br><br>
+
+<input id="team_points" type="number" placeholder="Points"><br><br>
+
+<button onclick="updateLeaderboard()">Update Points</button>
+
+<hr>
+
+<h2>Update Results Declared</h2>
+
+<input id="resultsDeclared" type="number" placeholder="Results Declared"><br><br>
+
+<button onclick="updateResultsDeclared()">Update</button>
+
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+  import { getFirestore } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+  import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+
+  // 🔥 REPLACE WITH YOUR FIREBASE CONFIG
+  const firebaseConfig = {
+    apiKey: "AIzaSyDec5_HyV8LGmOTaDnW7G74mQwT0JVGt00",
+    authDomain: "sahityotsav-koottilangadi.firebaseapp.com",
+    projectId: "sahityotsav-koottilangadi"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const db = getFirestore(app);
+
+  // 🔐 PROTECTION STARTS HERE
+const auth = getAuth(app);
+
+onAuthStateChanged(auth, (user) => {
+  if (!user) {
+    alert("Access denied. Please login.");
+    window.location.href = "login.html";
+  }
+
+  // ================= ADD RESULT =================
+  async function addResult() {
+    const category = document.getElementById("category").value;
+    const competition = document.getElementById("competition").value;
+
+    const first_name = document.getElementById("first_name").value;
+    const first_team = document.getElementById("first_team").value;
+
+    const second_name = document.getElementById("second_name").value;
+    const second_team = document.getElementById("second_team").value;
+
+    const third_name = document.getElementById("third_name").value;
+    const third_team = document.getElementById("third_team").value;
+
+    if (!competition) {
+      alert("Enter competition name");
+      return;
+    }
+
+    await addDoc(collection(db, "categories", category, "competitions"), {
+      name: competition,
+      first_name,
+      first_team,
+      second_name,
+      second_team,
+      third_name,
+      third_team
+    });
+
+    alert("Result Added!");
+
+    // Clear inputs
+    document.getElementById("competition").value = "";
+    document.getElementById("first_name").value = "";
+    document.getElementById("first_team").value = "";
+    document.getElementById("second_name").value = "";
+    document.getElementById("second_team").value = "";
+    document.getElementById("third_name").value = "";
+    document.getElementById("third_team").value = "";
+  }
+
+  // ================= UPDATE LEADERBOARD =================
+  async function updateLeaderboard() {
+  const team = document.getElementById("teamSelect").value;
+  const points = Number(document.getElementById("team_points").value);
+
+  if (isNaN(points)) {
+    alert("Enter valid points");
+    return;
+  }
+
+  await setDoc(doc(db, "leaderboard", team), {
+    points: points
+  });
+
+  alert("Points Updated!");
+}
+
+    // Clear inputs
+    document.getElementById("team_name").value = "";
+    document.getElementById("team_points").value = "";
+  }
+
+  // Make functions global
+  window.addResult = addResult;
+  window.updateLeaderboard = updateLeaderboard;
+
+</script>
+
+</body>
+</html>
