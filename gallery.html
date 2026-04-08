@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Gallery</title>
+
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 20px;
+      background: #f5f5f5;
+    }
+
+    h1 {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+
+    #gallery {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+      gap: 15px;
+    }
+
+    .card {
+      background: white;
+      border-radius: 10px;
+      overflow: hidden;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+      transition: transform 0.2s;
+    }
+
+    .card:hover {
+      transform: scale(1.03);
+    }
+
+    .card img {
+      width: 100%;
+      height: 200px;
+      object-fit: cover;
+    }
+
+    .card p {
+      padding: 10px;
+      text-align: center;
+      font-weight: bold;
+    }
+  </style>
+</head>
+<body>
+
+<h1>Gallery</h1>
+
+<div id="gallery"></div>
+
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+  import { getFirestore, collection, getDocs } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+
+  // 🔥 REPLACE WITH YOUR FIREBASE CONFIG
+  const firebaseConfig = {
+    apiKey: "AIzaSyDec5_HyV8LGmOTaDnW7G74mQwT0JVGt00",
+    authDomain: "sahityotsav-koottilangadi.firebaseapp.com",
+    projectId: "sahityotsav-koottilangadi"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const db = getFirestore(app);
+
+  const galleryDiv = document.getElementById("gallery");
+
+  async function loadGallery() {
+    const snapshot = await getDocs(collection(db, "gallery"));
+
+    let images = [];
+
+    snapshot.forEach(doc => {
+      images.push(doc.data());
+    });
+
+    // Sort latest first
+    images.sort((a, b) => b.createdAt - a.createdAt);
+
+    images.forEach(data => {
+      const card = document.createElement("div");
+      card.className = "card";
+
+      card.innerHTML = `
+        <img src="${data.imageUrl}" alt="gallery image">
+        <p>${data.category || ""}</p>
+      `;
+
+      galleryDiv.appendChild(card);
+    });
+  }
+
+  loadGallery();
+</script>
+
+</body>
+</html>

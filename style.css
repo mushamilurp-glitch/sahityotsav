@@ -21,6 +21,8 @@ body {
 .logo2 {
   height: 50px;
   margin-right: 5px;
+  margin-top: 10px;
+  display: block;
 }
 
 
@@ -53,11 +55,16 @@ body {
 }
 
 .text {
-  height: 200px;
+  height: 250px;
+}
+
+@font-face {
+  font-family: 'CooperBlack';
+  src: url('fonts/COOPBL.TTF');
 }
 
 .ssf {
-  font-family: CooperBlack;
+  font-family: 'CooperBlack';
 }
 
 .overlay {
