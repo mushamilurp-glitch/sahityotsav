@@ -11,12 +11,18 @@ body {
   justify-content: space-between;
   align-items: center;
   padding: 15px 30px;
-  background: rgba(0,0,0,0.8);
+  background: white;
 }
 
-.logo {
+.logo1 {
   height: 50px;
 }
+
+.logo2 {
+  height: 50px;
+  margin-right: 5px;
+}
+
 
 .navbar ul {
   display: flex;
@@ -28,7 +34,7 @@ body {
 }
 
 .navbar a {
-  color: white;
+  color: rgb(0, 0, 0);
   text-decoration: none;
   transition: 0.3s;
 }
@@ -44,6 +50,14 @@ body {
   display: flex;
   align-items: center;
   justify-content: center;
+}
+
+.text {
+  height: 200px;
+}
+
+.ssf {
+  font-family: CooperBlack;
 }
 
 .overlay {
