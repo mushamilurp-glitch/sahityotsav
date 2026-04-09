@@ -144,7 +144,9 @@ body {
   justify-content: center;
   position: relative;
   margin-top: 0;
-  padding-top: 60px;
+  padding-top: 100px;
+  padding-bottom: 60px;
+  transition: background 0.3s ease;
 }
 
 html.dark-mode .hero {
@@ -521,4 +523,229 @@ html.dark-mode .hero {
   .link-card i {
     font-size: 1.8rem;
   }
+}
+
+/* ============================================
+   RESULTS PAGE
+   ============================================ */
+.results-section {
+  min-height: 100vh;
+  background-color: var(--bg-primary);
+  padding: 80px 20px 60px;
+  transition: background-color 0.3s ease;
+}
+
+.results-section h1 {
+  font-size: 2.5rem;
+  color: var(--text-primary);
+  margin-bottom: 40px;
+  text-align: center;
+  font-weight: 700;
+  position: relative;
+  padding-bottom: 15px;
+}
+
+.results-section h1:after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 100px;
+  height: 3px;
+  background: linear-gradient(90deg, var(--accent-color) 0%, transparent 100%);
+}
+
+/* FILTER SECTION */
+.filter-section {
+  background-color: var(--card-bg);
+  padding: 25px;
+  border-radius: 10px;
+  margin-bottom: 40px;
+  box-shadow: var(--card-shadow);
+  display: flex;
+  align-items: flex-end;
+  gap: 20px;
+  flex-wrap: wrap;
+}
+
+.filter-group {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.filter-group label {
+  font-weight: 600;
+  color: var(--text-primary);
+  font-size: 0.95rem;
+}
+
+.filter-group select {
+  padding: 10px 15px;
+  border: 2px solid var(--border-color);
+  border-radius: 6px;
+  background-color: var(--bg-primary);
+  color: var(--text-primary);
+  font-size: 0.95rem;
+  cursor: pointer;
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
+  min-width: 250px;
+}
+
+.filter-group select:hover:not(:disabled) {
+  border-color: var(--accent-color);
+}
+
+.filter-group select:focus {
+  outline: none;
+  border-color: var(--accent-color);
+  box-shadow: 0 0 0 3px rgba(212, 175, 55, 0.1);
+}
+
+.filter-group select:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+@media (max-width: 768px) {
+  .filter-section {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .filter-group select {
+    min-width: 100%;
+  }
+}
+
+/* RESPONSIVE RESULTS TABLE */
+@media (max-width: 768px) {
+  .results-section {
+    padding: 60px 15px 40px;
+  }
+
+  .results-section h1 {
+    font-size: 1.8rem;
+    margin-bottom: 30px;
+  }
+
+  .filter-section {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .filter-section label {
+    display: block;
+    margin-bottom: 5px;
+  }
+
+  .filter-section select {
+    width: 100%;
+  }
+
+  .results-table {
+    font-size: 0.85rem;
+  }
+
+  .results-table thead th,
+  .results-table tbody td {
+    padding: 10px;
+  }
+}
+
+@media (max-width: 480px) {
+  .results-section h1 {
+    font-size: 1.5rem;
+  }
+
+  .results-table {
+    font-size: 0.75rem;
+  }
+
+  .results-table thead th,
+  .results-table tbody td {
+    padding: 8px 5px;
+  }
+}
+
+/* NO SELECTION MESSAGE */
+.no-selection-message {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 60px 20px;
+  background-color: var(--card-bg);
+  border-radius: 10px;
+  border: 2px dashed var(--border-color);
+  color: var(--text-secondary);
+  text-align: center;
+  margin-bottom: 30px;
+}
+
+.no-selection-message i {
+  font-size: 3rem;
+  color: var(--accent-color);
+  margin-bottom: 15px;
+  opacity: 0.7;
+}
+
+.no-selection-message p {
+  font-size: 1.1rem;
+  margin: 0;
+}
+
+/* NO RESULTS MESSAGE */
+.no-results-message {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 60px 20px;
+  background-color: var(--card-bg);
+  border-radius: 10px;
+  color: var(--text-secondary);
+  text-align: center;
+  margin-top: 30px;
+}
+
+.no-results-message i {
+  font-size: 3rem;
+  color: var(--accent-color);
+  margin-bottom: 15px;
+  opacity: 0.7;
+}
+
+.no-results-message p {
+  font-size: 1.1rem;
+  margin: 0;
+}
+
+/* LOADING SPINNER */
+.loading-spinner {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 60px 20px;
+  background-color: var(--card-bg);
+  border-radius: 10px;
+}
+
+.loading-spinner i {
+  font-size: 3rem;
+  color: var(--accent-color);
+  margin-bottom: 15px;
+  animation: spin 1s linear infinite;
+}
+
+.loading-spinner p {
+  color: var(--text-secondary);
+  font-size: 1.1rem;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
 }

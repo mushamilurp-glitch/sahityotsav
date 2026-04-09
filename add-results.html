@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Add Results - Admin Panel</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    .admin-page { padding: 80px 0; }
+    .admin-header { text-align: center; margin-bottom: 40px; }
+    .admin-header h1 { font-size: 2.4rem; margin-bottom: 10px; }
+    .admin-header p { color: var(--text-secondary); max-width: 720px; margin: 0 auto; }
+    .card { background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 20px; padding: 28px; box-shadow: var(--card-shadow); max-width: 600px; margin: 0 auto; }
+    .card h2 { margin-bottom: 20px; color: var(--accent-color); }
+    .form-row { display: grid; gap: 10px; margin-bottom: 18px; }
+    label { font-weight: 600; color: var(--text-secondary); }
+    input[type="text"], select {
+      width: 100%; padding: 12px 14px; border: 1px solid var(--border-color); border-radius: 12px; background: var(--bg-primary); color: var(--text-primary);
+    }
+    button { width: fit-content; background: var(--accent-color); color: #fff; border: none; border-radius: 12px; padding: 12px 24px; font-weight: 700; cursor: pointer; transition: transform 0.2s ease, background 0.2s ease; }
+    button:hover { transform: translateY(-1px); background: var(--accent-dark); }
+    .status-note { margin-top: 12px; color: var(--text-secondary); font-size: 0.95rem; }
+    .button-group { display: flex; flex-wrap: wrap; gap: 12px; }
+    .back-link { text-align: center; margin-top: 20px; }
+    .back-link a { color: var(--accent-color); text-decoration: none; }
+    .back-link a:hover { text-decoration: underline; }
+  </style>
+</head>
+<body>
+  <nav class="navbar">
+    <div class="navbar-left">
+      <img src="images/logo.png" class="logo1" alt="Logo">
+      <img src="images/sah-ml.png" class="logo2" alt="Sahithyotsav">
+    </div>
+
+    <button class="hamburger" id="hamburger" aria-label="Toggle menu">
+      <span></span>
+      <span></span>
+      <span></span>
+    </button>
+
+    <ul class="nav-links" id="navLinks">
+      <li><a href="index.html">Home</a></li>
+      <li><a href="results.html">Results</a></li>
+      <li><a href="leaderboard.html">Leaderboard</a></li>
+      <li><a href="events.html">Events</a></li>
+      <li><a href="gallery.html">Gallery</a></li>
+      <li><a href="donate.html">Donate</a></li>
+    </ul>
+
+    <button class="theme-toggle" id="themeToggle" aria-label="Toggle dark mode">
+      <i class="fas fa-moon"></i>
+    </button>
+  </nav>
+
+  <section class="admin-page">
+    <div class="container">
+      <div class="admin-header">
+        <h1>Add Competition Results</h1>
+        <p>Enter the winners for a competition.</p>
+      </div>
+
+      <div class="card">
+        <h2>Competition Result Entry</h2>
+        <div class="form-row">
+          <label for="adminCategory">Category</label>
+          <select id="adminCategory">
+            <option value="">Select category</option>
+            <option value="LP">LP</option>
+            <option value="UP">UP</option>
+            <option value="HS">HS</option>
+            <option value="HSS">HSS</option>
+            <option value="Junior">Junior</option>
+            <option value="Senior">Senior</option>
+            <option value="General">General</option>
+          </select>
+        </div>
+        <div class="form-row">
+          <label for="adminCompetition">Competition</label>
+          <select id="adminCompetition" disabled>
+            <option value="">Select competition</option>
+          </select>
+        </div>
+        <div class="form-row">
+          <label>First place winner</label>
+          <input id="firstName" type="text" placeholder="First place name">
+          <select id="firstTeam">
+            <option value="">Select team</option>
+            <option value="Perinthattiri">Perinthattiri</option>
+            <option value="Kolapparamba">Kolapparamba</option>
+            <option value="Padinhattumutri Town">Padinhattumutri Town</option>
+            <option value="Padinhattumutri West">Padinhattumutri West</option>
+            <option value="Padinhattumutri East">Padinhattumutri East</option>
+            <option value="Kadoopuram">Kadoopuram</option>
+            <option value="Unnamthala">Unnamthala</option>
+            <option value="Pallipuram">Pallipuram</option>
+            <option value="Koottilangadi">Koottilangadi</option>
+            <option value="Cheloor">Cheloor</option>
+          </select>
+        </div>
+        <div class="form-row">
+          <label>Second place winner</label>
+          <input id="secondName" type="text" placeholder="Second place name">
+          <select id="secondTeam">
+            <option value="">Select team</option>
+            <option value="Perinthattiri">Perinthattiri</option>
+            <option value="Kolapparamba">Kolapparamba</option>
+            <option value="Padinhattumutri Town">Padinhattumutri Town</option>
+            <option value="Padinhattumutri West">Padinhattumutri West</option>
+            <option value="Padinhattumutri East">Padinhattumutri East</option>
+            <option value="Kadoopuram">Kadoopuram</option>
+            <option value="Unnamthala">Unnamthala</option>
+            <option value="Pallipuram">Pallipuram</option>
+            <option value="Koottilangadi">Koottilangadi</option>
+            <option value="Cheloor">Cheloor</option>
+          </select>
+        </div>
+        <div class="form-row">
+          <label>Third place winner</label>
+          <input id="thirdName" type="text" placeholder="Third place name">
+          <select id="thirdTeam">
+            <option value="">Select team</option>
+            <option value="Perinthattiri">Perinthattiri</option>
+            <option value="Kolapparamba">Kolapparamba</option>
+            <option value="Padinhattumutri Town">Padinhattumutri Town</option>
+            <option value="Padinhattumutri West">Padinhattumutri West</option>
+            <option value="Padinhattumutri East">Padinhattumutri East</option>
+            <option value="Kadoopuram">Kadoopuram</option>
+            <option value="Unnamthala">Unnamthala</option>
+            <option value="Pallipuram">Pallipuram</option>
+            <option value="Koottilangadi">Koottilangadi</option>
+            <option value="Cheloor">Cheloor</option>
+          </select>
+        </div>
+        <div class="button-group">
+          <button id="saveResultBtn">Save Winners</button>
+        </div>
+        <p id="adminResultMessage" class="status-note"></p>
+      </div>
+
+      <div class="back-link">
+        <a href="admin.html">← Back to Admin Portal</a>
+      </div>
+    </div>
+  </section>
+
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-app.js";
+    import { getFirestore, collection, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-firestore.js";
+    import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-auth.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyDec5_HyV8LGmOTaDnW7G74mQwT0JVGt00",
+      authDomain: "sahityotsav-koottilangadi.firebaseapp.com",
+      projectId: "sahityotsav-koottilangadi",
+      storageBucket: "sahityotsav-koottilangadi.firebasestorage.app",
+      messagingSenderId: "397138020015",
+      appId: "1:397138020015:web:8296646970c71f2cf1f65a"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+    const auth = getAuth(app);
+
+    const saveResultBtn = document.getElementById('saveResultBtn');
+    const adminResultMessage = document.getElementById('adminResultMessage');
+
+    const competitions = {
+      LP: ['Madh Song', 'Elocution', 'Quiz', 'Story Telling', 'Pencil Drawing', 'Water Colouring', 'Language Game', 'Reading Malayalam', 'Reading Arabi-Malayalam', 'Book Test'],
+      UP: ['Mappila Song', 'Elocution', 'Quiz', 'Story Telling', 'Pencil Drawing', 'Water Colouring', 'Ganitha Keli', 'Spelling Bee', 'Sudoku', 'Book Test', 'Story Writing'],
+      HS: ['Madh Song', 'Mappila Song', 'Elocution Malayalam', 'Elocution English', 'Quiz', 'Poem Recitation Malayalam', 'Poem Recitation Urdu', 'Pencil Drawing', 'Water Colouring', 'Language Game English', 'News Reading', 'Caption Writing', 'Book Test', 'Essay Writing Malayalam', 'Poem Making', 'Story Writing'],
+      HSS: ['Mappila Song', 'Urdu Poem Recitation', 'Bhakthi Song', 'Elocution', 'Digital Painting', 'Story Writing', 'Poem Making', 'Essay Writing English', 'Essay Writing Malayalam', 'Quiz', 'Pencil Drawing', 'Water Colouring', 'News Writing', 'Calligraphy Arabic', 'Reel Making', 'Book Test'],
+      Junior: ['Sahitya Samvadam', 'Mappila Song', 'Elocution Malayalam', 'Elocution English', 'Elocution Arabic', 'Story Writing', 'Poem Making', 'Book Test', 'Essay Writing Malayalam', 'Essay Writing Arabic', 'Mudravakya Rachana', 'Madh Gana Rachana', 'Quiz', 'Translation Arabic', 'Calligraphy Arabic', 'Social Text', 'Hadees Musabaqa', 'AI Poem Making', 'Reel Making'],
+      Senior: ['Political Debate', 'Mappila Song', 'Hamd Urdu', 'Poem Recitation English', 'Elocution Malayalam', 'Elocution English', 'Elocution Urdu', "Musha'ara Alfiya", 'Poem Making', 'Poem Making English', 'Story Writing', 'Book Test', 'Essay Writing Malayalam', 'Essay Writing English', 'Essay Writing Urdu', 'Translation English', 'Madh Gana Rachana', 'Mudravakya Rachana', 'Quiz', 'Feature Writing', 'Social Text', 'Poster Designing', 'E-poster', 'Digital Illustration', 'Dgital Painting'],
+      General: ['Spot Magazine', 'Duff', 'Arabana', 'Group Song Cat-A', 'Group Song Cat-B', 'Moulid Recitation', 'Qaseeda Recitation', 'Viplavagaanam', 'Chumarezhuth', 'Malappattu', 'Risala Quiz', 'Qawwali', 'Viplava Gana Rachana', 'Mappilappattu Rachana', 'Project', 'Collage', 'Nasheeda', 'Family Magazine']
+    };
+
+    function showMessage(element, text, isError = false) {
+      element.textContent = text;
+      element.style.color = isError ? '#e74c3c' : 'var(--text-secondary)';
+      setTimeout(() => { element.textContent = ''; }, 4000);
+    }
+
+    function populateCompetitions(category) {
+      const competitionSelect = document.getElementById('adminCompetition');
+      competitionSelect.innerHTML = '<option value="">Select competition</option>';
+      competitionSelect.disabled = true;
+
+      if (!category || !competitions[category]) {
+        return;
+      }
+
+      competitions[category].forEach((comp) => {
+        const option = document.createElement('option');
+        option.value = comp;
+        option.textContent = comp;
+        competitionSelect.appendChild(option);
+      });
+      competitionSelect.disabled = false;
+    }
+
+    onAuthStateChanged(auth, (user) => {
+      if (!user) {
+        alert('Please sign in to access the admin portal.');
+        window.location.href = 'login.html';
+      }
+    });
+
+    document.getElementById('adminCategory').addEventListener('change', (e) => {
+      populateCompetitions(e.target.value);
+    });
+
+    async function saveResult() {
+      const category = document.getElementById('adminCategory').value;
+      const competition = document.getElementById('adminCompetition').value;
+      const firstName = document.getElementById('firstName').value.trim();
+      const firstTeam = document.getElementById('firstTeam').value.trim();
+      const secondName = document.getElementById('secondName').value.trim();
+      const secondTeam = document.getElementById('secondTeam').value.trim();
+      const thirdName = document.getElementById('thirdName').value.trim();
+      const thirdTeam = document.getElementById('thirdTeam').value.trim();
+
+      if (!category || !competition || !firstName || !firstTeam || !secondName || !secondTeam || !thirdName || !thirdTeam) {
+        showMessage(adminResultMessage, 'Please fill all winner names and team names.', true);
+        return;
+      }
+
+      const entries = [
+        { position: '1st', name: firstName, team: firstTeam, points: 3 },
+        { position: '2nd', name: secondName, team: secondTeam, points: 2 },
+        { position: '3rd', name: thirdName, team: thirdTeam, points: 1 }
+      ];
+
+      for (const entry of entries) {
+        await addDoc(collection(db, 'results'), {
+          category,
+          competition,
+          position: entry.position,
+          name: entry.name,
+          team: entry.team,
+          points: entry.points,
+          status: 'Completed',
+          createdAt: serverTimestamp()
+        });
+      }
+
+      document.getElementById('adminCompetition').value = '';
+      document.getElementById('adminCategory').value = '';
+      document.getElementById('adminCompetition').disabled = true;
+      document.getElementById('firstName').value = '';
+      document.getElementById('firstTeam').value = '';
+      document.getElementById('secondName').value = '';
+      document.getElementById('secondTeam').value = '';
+      document.getElementById('thirdName').value = '';
+      document.getElementById('thirdTeam').value = '';
+
+      showMessage(adminResultMessage, 'First/second/third winners saved successfully.');
+    }
+
+    saveResultBtn.addEventListener('click', saveResult);
+  </script>
+
+  <script src="script.js"></script>
+</body>
+</html>

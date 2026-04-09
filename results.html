@@ -1,95 +1,281 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-  <title>Results</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Results - Sahithyotsav</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 <body>
 
-<h1>Results</h1>
+  <!-- NAVBAR -->
+  <nav class="navbar">
+    <div class="navbar-left">
+      <img src="images/logo.png" class="logo1" alt="Logo">
+      <img src="images/sah-ml.png" class="logo2" alt="Sahithyotsav">
+    </div>
 
-<select id="category">
-  <option value="">Select Category</option>
-  <option>LP</option>
-  <option>UP</option>
-  <option>HS</option>
-  <option>HSS</option>
-  <option>Junior</option>
-  <option>Senior</option>
-  <option>General</option>
-</select>
+    <button class="hamburger" id="hamburger" aria-label="Toggle menu">
+      <span></span>
+      <span></span>
+      <span></span>
+    </button>
 
-<select id="competition">
-  <option value="">Select Competition</option>
-</select>
+    <ul class="nav-links" id="navLinks">
+      <li><a href="index.html">Home</a></li>
+      <li><a href="results.html">Results</a></li>
+      <li><a href="leaderboard.html">Leaderboard</a></li>
+      <li><a href="events.html">Events</a></li>
+      <li><a href="gallery.html">Gallery</a></li>
+      <li><a href="donate.html">Donate</a></li>
+    </ul>
 
-<div id="results"></div>
+    <button class="theme-toggle" id="themeToggle" aria-label="Toggle dark mode">
+      <i class="fas fa-moon"></i>
+    </button>
+  </nav>
 
-<script type="module">
-  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-  import { getFirestore, collection, getDocs } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+  <!-- RESULTS PAGE CONTENT -->
+  <section class="results-section">
+    <div class="container">
+      <h1>Competition Results</h1>
+      
+      <!-- Category & Competition Selection -->
+      <div class="filter-section">
+        <div class="filter-group">
+          <label for="categoryFilter">Select Category:</label>
+          <select id="categoryFilter">
+            <option value="">-- Choose a Category --</option>
+            <option value="LP">LP (Lower Primary)</option>
+            <option value="UP">UP (Upper Primary)</option>
+            <option value="HS">HS (High School)</option>
+            <option value="HSS">HSS (Higher Secondary)</option>
+            <option value="Junior">Junior</option>
+            <option value="Senior">Senior</option>
+            <option value="General">General</option>
+          </select>
+        </div>
 
-  const firebaseConfig = {
-    apiKey: "AIzaSyDec5_HyV8LGmOTaDnW7G74mQwT0JVGt00",
-    authDomain: "sahityotsav-koottilangadi.firebaseapp.com",
-    projectId: "sahityotsav-koottilangadi"
-  };
+        <div class="filter-group">
+          <label for="competitionFilter">Select Competition:</label>
+          <select id="competitionFilter" disabled>
+            <option value="">-- Choose a Competition --</option>
+          </select>
+        </div>
+      </div>
 
-  const app = initializeApp(firebaseConfig);
-  const db = getFirestore(app);
+      <!-- No Selection Message -->
+      <div id="noSelectionMessage" class="no-selection-message">
+        <i class="fas fa-hand-point-up"></i>
+        <p>Please select a category and competition to view results</p>
+      </div>
 
-  const categories = ["LP", "UP", "HS", "HSS", "Junior", "Senior", "General"];
+      <!-- Results Table (Hidden until both are selected) -->
+      <div id="resultsContainer" class="results-table-container" style="display: none;">
+        <table class="results-table">
+          <thead>
+            <tr>
+              <th>Rank</th>
+              <th>Name</th>
+              <th>Category</th>
+              <th>Competition</th>
+              <th>Points</th>
+              <th>Status</th>
+            </tr>
+          </thead>
+          <tbody id="resultsBody">
+            <!-- Dynamic content will be inserted here -->
+          </tbody>
+        </table>
+      </div>
 
-  const categorySelect = document.getElementById("category");
-  const competitionSelect = document.getElementById("competition");
-  const container = document.getElementById("results");
+      <!-- Loading Spinner -->
+      <div id="loadingSpinner" class="loading-spinner" style="display: none;">
+        <i class="fas fa-spinner"></i>
+        <p>Loading results...</p>
+      </div>
 
-  let competitionsData = [];
+      <!-- No Results Message -->
+      <div id="noResultsMessage" class="no-results-message" style="display: none;">
+        <i class="fas fa-inbox"></i>
+        <p>No results found for this selection</p>
+      </div>
+    </div>
+  </section>
 
-// When category changes → load competitions
-categorySelect.addEventListener("change", async () => {
-  const category = categorySelect.value;
+  <!-- Firebase Config -->
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-app.js";
+    import { getFirestore, collection, query, where, getDocs } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-firestore.js";
 
-  competitionSelect.innerHTML = `<option>Select Competition</option>`;
-  container.innerHTML = "";
+    // Your Firebase configuration
+    const firebaseConfig = {
+      apiKey: "AIzaSyDec5_HyV8LGmOTaDnW7G74mQwT0JVGt00",
+      authDomain: "sahityotsav-koottilangadi.firebaseapp.com",
+      projectId: "sahityotsav-koottilangadi",
+      storageBucket: "sahityotsav-koottilangadi.firebasestorage.app",
+      messagingSenderId: "397138020015",
+      appId: "1:397138020015:web:8296646970c71f2cf1f65a"
+    };
 
-  if (!category) return;
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
 
-  const compRef = collection(db, "categories", category, "competitions");
-  const snapshot = await getDocs(compRef);
+    // Competition structure for each category (fallback list)
+    const competitions = {
+      LP: ['Madh Song', 'Elocution', 'Quiz', 'Story Telling', 'Pencil Drawing', 'Water Colouring', 'Language Game', 'Reading Malayalam', 'Reading Arabi-Malayalam', 'Book Test'],
+      UP: ['Mappila Song', 'Elocution', 'Quiz', 'Story Telling', 'Pencil Drawing', 'Water Colouring', 'Ganitha Keli', 'Spelling Bee', 'Sudoku', 'Book Test', 'Story Writing'],
+      HS: ['Madh Song', 'Mappila Song', 'Elocution Malayalam', 'Elocution English', 'Quiz', 'Poem Recitation Malayalam', 'Poem Recitation Urdu', 'Pencil Drawing', 'Water Colouring', 'Language Game English', 'News Reading', 'Caption Writing', 'Book Test', 'Essay Writing Malayalam', 'Poem Making', 'Story Writing'],
+      HSS: ['Mappila Song', 'Urdu Poem Recitation', 'Bhakthi Song', 'Elocution', 'Digital Painting', 'Story Writing', 'Poem Making', 'Essay Writing English', 'Essay Writing Malayalam', 'Quiz', 'Pencil Drawing', 'Water Colouring', 'News Writing', 'Calligraphy Arabic', 'Reel Making', 'Book Test'],
+      Junior: ['Sahitya Samvadam', 'Mappila Song', 'Elocution Malayalam', 'Elocution English', 'Elocution Arabic', 'Story Writing', 'Poem Making', 'Book Test', 'Essay Writing Malayalam', 'Essay Writing Arabic', 'Mudravakya Rachana', 'Madh Gana Rachana', 'Quiz', 'Translation Arabic', 'Calligraphy Arabic', 'Social Text', 'Hadees Musabaqa', 'AI Poem Making', 'Reel Making'],
+      Senior: ['Political Debate', 'Mappila Song', 'Hamd Urdu', 'Poem Recitation English', 'Elocution Malayalam', 'Elocution English', 'Elocution Urdu', "Musha'ara Alfiya", 'Poem Making', 'Poem Making English', 'Story Writing', 'Book Test', 'Essay Writing Malayalam', 'Essay Writing English', 'Essay Writing Urdu', 'Translation English', 'Madh Gana Rachana', 'Mudravakya Rachana', 'Quiz', 'Feature Writing', 'Social Text', 'Poster Designing', 'E-poster', 'Digital Illustration', 'Dgital Painting'],
+      General: ['Spot Magazine', 'Duff', 'Arabana', 'Group Song Cat-A', 'Group Song Cat-B', 'Moulid Recitation', 'Qaseeda Recitation', 'Viplavagaanam', 'Chumarezhuth', 'Malappattu', 'Risala Quiz', 'Qawwali', 'Viplava Gana Rachana', 'Mappilappattu Rachana', 'Project', 'Collage', 'Nasheeda', 'Family Magazine']
+    };
 
-  competitionsData = [];
+    const categoryFilter = document.getElementById('categoryFilter');
+    const competitionFilter = document.getElementById('competitionFilter');
+    const resultsContainer = document.getElementById('resultsContainer');
+    const resultsBody = document.getElementById('resultsBody');
+    const noSelectionMessage = document.getElementById('noSelectionMessage');
+    const noResultsMessage = document.getElementById('noResultsMessage');
+    const loadingSpinner = document.getElementById('loadingSpinner');
 
-  snapshot.forEach(doc => {
-    const data = doc.data();
-    competitionsData.push(data);
+    // Function to fetch competitions for a category
+    async function fetchCompetitionsForCategory(category) {
+      try {
+        const q = query(collection(db, 'results'), where('category', '==', category));
+        const querySnapshot = await getDocs(q);
+        
+        const compSet = new Set();
+        querySnapshot.forEach((doc) => {
+          const data = doc.data();
+          if (data.competition) {
+            compSet.add(data.competition);
+          }
+        });
+        
+        return Array.from(compSet).sort();
+      } catch (error) {
+        console.error('Error fetching competitions:', error);
+        return [];
+      }
+    }
 
-    const option = document.createElement("option");
-    option.value = data.name;
-    option.textContent = data.name;
-    competitionSelect.appendChild(option);
-  });
-});
+    // Update competition dropdown when category changes
+    categoryFilter.addEventListener('change', async (e) => {
+      const selectedCategory = e.target.value;
+      competitionFilter.innerHTML = '<option value="">-- Choose a Competition --</option>';
+      competitionFilter.disabled = true;
+      
+      if (selectedCategory) {
+        loadingSpinner.style.display = 'flex';
+        noSelectionMessage.style.display = 'none';
+        
+        let comps = await fetchCompetitionsForCategory(selectedCategory);
+        if (!comps.length && competitions[selectedCategory]) {
+          comps = competitions[selectedCategory];
+        }
+        
+        if (comps.length > 0) {
+          competitionFilter.disabled = false;
+          comps.forEach((comp) => {
+            const option = document.createElement('option');
+            option.value = comp;
+            option.textContent = comp;
+            competitionFilter.appendChild(option);
+          });
+        }
+        
+        loadingSpinner.style.display = 'none';
+        resetResultsView();
+      } else {
+        resetResultsView();
+      }
+    });
 
-// When competition selected → show result
-competitionSelect.addEventListener("change", () => {
-  const selected = competitionSelect.value;
+    // Fetch results when competition changes
+    competitionFilter.addEventListener('change', async (e) => {
+      const selectedCategory = categoryFilter.value;
+      const selectedCompetition = e.target.value;
 
-  container.innerHTML = "";
+      if (!selectedCategory || !selectedCompetition) {
+        resetResultsView();
+        return;
+      }
 
-  const result = competitionsData.find(c => c.name === selected);
+      // Show loading spinner
+      resultsContainer.style.display = 'none';
+      noSelectionMessage.style.display = 'none';
+      noResultsMessage.style.display = 'none';
+      loadingSpinner.style.display = 'flex';
 
-  if (!result) return;
+      try {
+        // Query Firestore for results matching both category and competition
+        const q = query(
+          collection(db, 'results'),
+          where('category', '==', selectedCategory),
+          where('competition', '==', selectedCompetition)
+        );
 
-  container.innerHTML = `
-    <h2>${result.name}</h2>
-    <p>🥇 ${result.first_name} (${result.first_team})</p>
-    <p>🥈 ${result.second_name} (${result.second_team})</p>
-    <p>🥉 ${result.third_name} (${result.third_team})</p>
-  `;
-});
+        const querySnapshot = await getDocs(q);
 
-  loadResults();
-</script>
+        if (querySnapshot.empty) {
+          // No results found
+          loadingSpinner.style.display = 'none';
+          noResultsMessage.style.display = 'flex';
+          resultsContainer.style.display = 'none';
+          return;
+        }
 
+        // Populate table with results
+        resultsBody.innerHTML = '';
+        let rank = 1;
+
+        const results = [];
+        querySnapshot.forEach((doc) => {
+          results.push({ id: doc.id, ...doc.data() });
+        });
+
+        // Sort by points (descending)
+        results.sort((a, b) => (b.points || 0) - (a.points || 0));
+
+        results.forEach((result) => {
+          const row = document.createElement('tr');
+          row.innerHTML = `
+            <td><strong>#${rank}</strong></td>
+            <td>${result.name || 'N/A'}</td>
+            <td>${result.category || 'N/A'}</td>
+            <td>${result.competition || 'N/A'}</td>
+            <td><strong>${result.points || 0}</strong></td>
+            <td>${result.status || 'Completed'}</td>
+          `;
+          resultsBody.appendChild(row);
+          rank++;
+        });
+
+        // Show results table
+        loadingSpinner.style.display = 'none';
+        noSelectionMessage.style.display = 'none';
+        noResultsMessage.style.display = 'none';
+        resultsContainer.style.display = 'block';
+
+      } catch (error) {
+        console.error('Error fetching results:', error);
+        loadingSpinner.style.display = 'none';
+        noResultsMessage.style.display = 'flex';
+        noResultsMessage.innerHTML = '<i class="fas fa-exclamation-circle"></i><p>Error loading results. Please try again.</p>';
+      }
+    });
+
+    function resetResultsView() {
+      resultsContainer.style.display = 'none';
+      noSelectionMessage.style.display = 'flex';
+      noResultsMessage.style.display = 'none';
+      loadingSpinner.style.display = 'none';
+    }
+  </script>
+
+  <script src="script.js"></script>
 </body>
 </html>

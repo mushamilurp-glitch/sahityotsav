@@ -1,160 +1,97 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-  <title>Admin Panel</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin Panel - Sahithyotsav</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    .admin-page { padding: 80px 0; }
+    .admin-header { text-align: center; margin-bottom: 40px; }
+    .admin-header h1 { font-size: 2.4rem; margin-bottom: 10px; }
+    .admin-header p { color: var(--text-secondary); max-width: 720px; margin: 0 auto; }
+    .admin-grid { display: grid; gap: 30px; max-width: 600px; margin: 0 auto; }
+    .card { background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 20px; padding: 28px; box-shadow: var(--card-shadow); text-align: center; }
+    .card h2 { margin-bottom: 20px; color: var(--accent-color); }
+    button { width: 100%; background: var(--accent-color); color: #fff; border: none; border-radius: 12px; padding: 16px 24px; font-weight: 700; cursor: pointer; transition: transform 0.2s ease, background 0.2s ease; }
+    button:hover { transform: translateY(-1px); background: var(--accent-dark); }
+  </style>
 </head>
 <body>
+  <nav class="navbar">
+    <div class="navbar-left">
+      <img src="images/logo.png" class="logo1" alt="Logo">
+      <img src="images/sah-ml.png" class="logo2" alt="Sahithyotsav">
+    </div>
 
-<h1>Admin Panel</h1>
+    <button class="hamburger" id="hamburger" aria-label="Toggle menu">
+      <span></span>
+      <span></span>
+      <span></span>
+    </button>
 
-<!-- ================= RESULTS SECTION ================= -->
-<h2>Add Competition Result</h2>
+    <ul class="nav-links" id="navLinks">
+      <li><a href="index.html">Home</a></li>
+      <li><a href="results.html">Results</a></li>
+      <li><a href="leaderboard.html">Leaderboard</a></li>
+      <li><a href="events.html">Events</a></li>
+      <li><a href="gallery.html">Gallery</a></li>
+      <li><a href="donate.html">Donate</a></li>
+    </ul>
 
-<select id="category">
-  <option>LP</option>
-  <option>UP</option>
-  <option>HS</option>
-  <option>HSS</option>
-  <option>Junior</option>
-  <option>Senior</option>
-  <option>General</option>
-</select><br><br>
+    <button class="theme-toggle" id="themeToggle" aria-label="Toggle dark mode">
+      <i class="fas fa-moon"></i>
+    </button>
+  </nav>
 
-<input id="competition" placeholder="Competition Name"><br><br>
+  <section class="admin-page">
+    <div class="container">
+      <div class="admin-header">
+        <h1>Admin Portal</h1>
+        <p>Choose an action to manage competition results and leaderboard.</p>
+      </div>
 
-<input id="first_name" placeholder="1st Participant"><br><br>
-<input id="first_team" placeholder="1st Team"><br><br>
+      <div class="admin-grid">
+        <div class="card">
+          <h2>Add Competition Results</h2>
+          <p>Enter winners for competitions</p>
+          <button onclick="window.location.href='add-results.html'">Go to Add Results</button>
+        </div>
 
-<input id="second_name" placeholder="2nd Participant"><br><br>
-<input id="second_team" placeholder="2nd Team"><br><br>
+        <div class="card">
+          <h2>Update Leaderboard</h2>
+          <p>Update team scores and results declared count</p>
+          <button onclick="window.location.href='update-leaderboard.html'">Go to Update Leaderboard</button>
+        </div>
+      </div>
+    </div>
+  </section>
 
-<input id="third_name" placeholder="3rd Participant"><br><br>
-<input id="third_team" placeholder="3rd Team"><br><br>
+  <script type="module">
+    import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-auth.js";
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-app.js";
 
-<button onclick="addResult()">Add Result</button>
+    const firebaseConfig = {
+      apiKey: "AIzaSyDec5_HyV8LGmOTaDnW7G74mQwT0JVGt00",
+      authDomain: "sahityotsav-koottilangadi.firebaseapp.com",
+      projectId: "sahityotsav-koottilangadi",
+      storageBucket: "sahityotsav-koottilangadi.firebasestorage.app",
+      messagingSenderId: "397138020015",
+      appId: "1:397138020015:web:8296646970c71f2cf1f65a"
+    };
 
-<hr>
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
 
-<!-- ================= LEADERBOARD SECTION ================= -->
-<h2>Update Leaderboard</h2>
-
-<select id="teamSelect">
-  <option>Perinthattiri</option>
-  <option>Kolapparamba</option>
-  <option>Padinhattumutri Town</option>
-  <option>Padinhattumutri West</option>
-  <option>Padinhattumutri East</option>
-  <option>Kadoopuram</option>
-  <option>Unnamthala</option>
-  <option>Pallipuram</option>
-  <option>Koottilangadi</option>
-  <option>Cheloor</option>
-</select><br><br>
-
-<input id="team_points" type="number" placeholder="Points"><br><br>
-
-<button onclick="updateLeaderboard()">Update Points</button>
-
-<hr>
-
-<h2>Update Results Declared</h2>
-
-<input id="resultsDeclared" type="number" placeholder="Results Declared"><br><br>
-
-<button onclick="updateResultsDeclared()">Update</button>
-
-<script type="module">
-  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-  import { getFirestore } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
-  import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
-
-  // 🔥 REPLACE WITH YOUR FIREBASE CONFIG
-  const firebaseConfig = {
-    apiKey: "AIzaSyDec5_HyV8LGmOTaDnW7G74mQwT0JVGt00",
-    authDomain: "sahityotsav-koottilangadi.firebaseapp.com",
-    projectId: "sahityotsav-koottilangadi"
-  };
-
-  const app = initializeApp(firebaseConfig);
-  const db = getFirestore(app);
-
-  // 🔐 PROTECTION STARTS HERE
-const auth = getAuth(app);
-
-onAuthStateChanged(auth, (user) => {
-  if (!user) {
-    alert("Access denied. Please login.");
-    window.location.href = "login.html";
-  }
-
-  // ================= ADD RESULT =================
-  async function addResult() {
-    const category = document.getElementById("category").value;
-    const competition = document.getElementById("competition").value;
-
-    const first_name = document.getElementById("first_name").value;
-    const first_team = document.getElementById("first_team").value;
-
-    const second_name = document.getElementById("second_name").value;
-    const second_team = document.getElementById("second_team").value;
-
-    const third_name = document.getElementById("third_name").value;
-    const third_team = document.getElementById("third_team").value;
-
-    if (!competition) {
-      alert("Enter competition name");
-      return;
-    }
-
-    await addDoc(collection(db, "categories", category, "competitions"), {
-      name: competition,
-      first_name,
-      first_team,
-      second_name,
-      second_team,
-      third_name,
-      third_team
+    onAuthStateChanged(auth, (user) => {
+      if (!user) {
+        alert('Please sign in to access the admin portal.');
+        window.location.href = 'login.html';
+      }
     });
+  </script>
 
-    alert("Result Added!");
-
-    // Clear inputs
-    document.getElementById("competition").value = "";
-    document.getElementById("first_name").value = "";
-    document.getElementById("first_team").value = "";
-    document.getElementById("second_name").value = "";
-    document.getElementById("second_team").value = "";
-    document.getElementById("third_name").value = "";
-    document.getElementById("third_team").value = "";
-  }
-
-  // ================= UPDATE LEADERBOARD =================
-  async function updateLeaderboard() {
-  const team = document.getElementById("teamSelect").value;
-  const points = Number(document.getElementById("team_points").value);
-
-  if (isNaN(points)) {
-    alert("Enter valid points");
-    return;
-  }
-
-  await setDoc(doc(db, "leaderboard", team), {
-    points: points
-  });
-
-  alert("Points Updated!");
-}
-
-    // Clear inputs
-    document.getElementById("team_name").value = "";
-    document.getElementById("team_points").value = "";
-  }
-
-  // Make functions global
-  window.addResult = addResult;
-  window.updateLeaderboard = updateLeaderboard;
-
-</script>
-
+  <script src="script.js"></script>
 </body>
 </html>

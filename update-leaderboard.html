@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Update Leaderboard - Admin Panel</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    .admin-page { padding: 80px 0; }
+    .admin-header { text-align: center; margin-bottom: 40px; }
+    .admin-header h1 { font-size: 2.4rem; margin-bottom: 10px; }
+    .admin-header p { color: var(--text-secondary); max-width: 720px; margin: 0 auto; }
+    .card { background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 20px; padding: 28px; box-shadow: var(--card-shadow); max-width: 600px; margin: 0 auto; }
+    .card h2 { margin-bottom: 20px; color: var(--accent-color); }
+    .form-row { display: grid; gap: 10px; margin-bottom: 18px; }
+    label { font-weight: 600; color: var(--text-secondary); }
+    input[type="number"], select {
+      width: 100%; padding: 12px 14px; border: 1px solid var(--border-color); border-radius: 12px; background: var(--bg-primary); color: var(--text-primary);
+    }
+    button { width: fit-content; background: var(--accent-color); color: #fff; border: none; border-radius: 12px; padding: 12px 24px; font-weight: 700; cursor: pointer; transition: transform 0.2s ease, background 0.2s ease; }
+    button:hover { transform: translateY(-1px); background: var(--accent-dark); }
+    .status-note { margin-top: 12px; color: var(--text-secondary); font-size: 0.95rem; }
+    .button-group { display: flex; flex-wrap: wrap; gap: 12px; }
+    .back-link { text-align: center; margin-top: 20px; }
+    .back-link a { color: var(--accent-color); text-decoration: none; }
+    .teams-grid { display: grid; gap: 15px; }
+    .team-row { display: flex; align-items: center; gap: 15px; }
+    .team-row label { flex: 1; min-width: 0; font-weight: 500; }
+    .team-row input { flex: 0 0 120px; }
+  </style>
+</head>
+<body>
+  <nav class="navbar">
+    <div class="navbar-left">
+      <img src="images/logo.png" class="logo1" alt="Logo">
+      <img src="images/sah-ml.png" class="logo2" alt="Sahithyotsav">
+    </div>
+
+    <button class="hamburger" id="hamburger" aria-label="Toggle menu">
+      <span></span>
+      <span></span>
+      <span></span>
+    </button>
+
+    <ul class="nav-links" id="navLinks">
+      <li><a href="index.html">Home</a></li>
+      <li><a href="results.html">Results</a></li>
+      <li><a href="leaderboard.html">Leaderboard</a></li>
+      <li><a href="events.html">Events</a></li>
+      <li><a href="gallery.html">Gallery</a></li>
+      <li><a href="donate.html">Donate</a></li>
+    </ul>
+
+    <button class="theme-toggle" id="themeToggle" aria-label="Toggle dark mode">
+      <i class="fas fa-moon"></i>
+    </button>
+  </nav>
+
+  <section class="admin-page">
+    <div class="container">
+      <div class="admin-header">
+        <h1>Update Leaderboard</h1>
+        <p>Update team scores and manage results status.</p>
+      </div>
+
+      <div class="card">
+        <h2>Update Leaderboard</h2>
+        <div class="form-row">
+          <label for="resultsDeclaredCount">Number of Results Declared</label>
+          <input id="resultsDeclaredCount" type="number" placeholder="Enter number of results declared" min="0">
+        </div>
+        <hr style="margin: 24px 0; border-color: var(--border-color);">
+        <h3>Team Points</h3>
+        <p style="color: var(--text-secondary); font-size: 0.9rem; margin-bottom: 20px;">Enter points for each team below:</p>
+        <div class="teams-grid">
+          <div class="team-row">
+            <label for="points-Perinthattiri">Perinthattiri</label>
+            <input id="points-Perinthattiri" type="number" placeholder="0" min="0">
+          </div>
+          <div class="team-row">
+            <label for="points-Kolapparamba">Kolapparamba</label>
+            <input id="points-Kolapparamba" type="number" placeholder="0" min="0">
+          </div>
+          <div class="team-row">
+            <label for="points-PadinhattumutriTown">Padinhattumutri Town</label>
+            <input id="points-PadinhattumutriTown" type="number" placeholder="0" min="0">
+          </div>
+          <div class="team-row">
+            <label for="points-PadinhattumutriWest">Padinhattumutri West</label>
+            <input id="points-PadinhattumutriWest" type="number" placeholder="0" min="0">
+          </div>
+          <div class="team-row">
+            <label for="points-PadinhattumutriEast">Padinhattumutri East</label>
+            <input id="points-PadinhattumutriEast" type="number" placeholder="0" min="0">
+          </div>
+          <div class="team-row">
+            <label for="points-Kadoopuram">Kadoopuram</label>
+            <input id="points-Kadoopuram" type="number" placeholder="0" min="0">
+          </div>
+          <div class="team-row">
+            <label for="points-Unnamthala">Unnamthala</label>
+            <input id="points-Unnamthala" type="number" placeholder="0" min="0">
+          </div>
+          <div class="team-row">
+            <label for="points-Pallipuram">Pallipuram</label>
+            <input id="points-Pallipuram" type="number" placeholder="0" min="0">
+          </div>
+          <div class="team-row">
+            <label for="points-Koottilangadi">Koottilangadi</label>
+            <input id="points-Koottilangadi" type="number" placeholder="0" min="0">
+          </div>
+          <div class="team-row">
+            <label for="points-Cheloor">Cheloor</label>
+            <input id="points-Cheloor" type="number" placeholder="0" min="0">
+          </div>
+        </div>
+        <div class="button-group">
+          <button id="saveLeaderboardBtn">Save Leaderboard</button>
+        </div>
+        <p id="adminStatusMessage" class="status-note"></p>
+      </div>
+
+      <div class="back-link">
+        <a href="admin.html">← Back to Admin Portal</a>
+      </div>
+    </div>
+  </section>
+
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-app.js";
+    import { getFirestore, setDoc, doc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-firestore.js";
+    import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-auth.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyDec5_HyV8LGmOTaDnW7G74mQwT0JVGt00",
+      authDomain: "sahityotsav-koottilangadi.firebaseapp.com",
+      projectId: "sahityotsav-koottilangadi",
+      storageBucket: "sahityotsav-koottilangadi.firebasestorage.app",
+      messagingSenderId: "397138020015",
+      appId: "1:397138020015:web:8296646970c71f2cf1f65a"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+    const auth = getAuth(app);
+
+    const saveLeaderboardBtn = document.getElementById('saveLeaderboardBtn');
+    const adminStatusMessage = document.getElementById('adminStatusMessage');
+
+    const teams = [
+      { id: 'Perinthattiri', name: 'Perinthattiri' },
+      { id: 'Kolapparamba', name: 'Kolapparamba' },
+      { id: 'PadinhattumutriTown', name: 'Padinhattumutri Town' },
+      { id: 'PadinhattumutriWest', name: 'Padinhattumutri West' },
+      { id: 'PadinhattumutriEast', name: 'Padinhattumutri East' },
+      { id: 'Kadoopuram', name: 'Kadoopuram' },
+      { id: 'Unnamthala', name: 'Unnamthala' },
+      { id: 'Pallipuram', name: 'Pallipuram' },
+      { id: 'Koottilangadi', name: 'Koottilangadi' },
+      { id: 'Cheloor', name: 'Cheloor' }
+    ];
+
+    function showMessage(element, text, isError = false) {
+      element.textContent = text;
+      element.style.color = isError ? '#e74c3c' : 'var(--text-secondary)';
+      setTimeout(() => { element.textContent = ''; }, 4000);
+    }
+
+    onAuthStateChanged(auth, (user) => {
+      if (!user) {
+        alert('Please sign in to access the admin portal.');
+        window.location.href = 'login.html';
+      }
+    });
+
+    async function saveLeaderboard() {
+      const declaredCount = Number(document.getElementById('resultsDeclaredCount').value);
+
+      if (Number.isNaN(declaredCount)) {
+        showMessage(adminStatusMessage, 'Enter a valid number for results declared.', true);
+        return;
+      }
+
+      // Collect all team points
+      const teamUpdates = [];
+      for (const team of teams) {
+        const points = Number(document.getElementById(`points-${team.id}`).value) || 0;
+        teamUpdates.push({ name: team.name, points });
+      }
+
+      try {
+        // Save results declared count
+        await setDoc(doc(db, 'meta', 'summary'), {
+          resultsDeclared: declaredCount,
+          updatedAt: serverTimestamp()
+        }, { merge: true });
+
+        // Save all team points
+        const updatePromises = teamUpdates.map(({ name, points }) =>
+          setDoc(doc(db, 'leaderboard', name), {
+            points,
+            updatedAt: serverTimestamp()
+          }, { merge: true })
+        );
+
+        await Promise.all(updatePromises);
+
+        // Clear all inputs
+        document.getElementById('resultsDeclaredCount').value = '';
+        teams.forEach((team) => {
+          document.getElementById(`points-${team.id}`).value = '';
+        });
+
+        showMessage(adminStatusMessage, 'Leaderboard and results count updated successfully.');
+      } catch (error) {
+        console.error('Error updating leaderboard:', error);
+        showMessage(adminStatusMessage, 'Error updating leaderboard. Please try again.', true);
+      }
+    }
+
+    saveLeaderboardBtn.addEventListener('click', saveLeaderboard);
+  </script>
+
+  <script src="script.js"></script>
+</body>
+</html>
