@@ -11,7 +11,7 @@
     .admin-header { text-align: center; margin-bottom: 40px; }
     .admin-header h1 { font-size: 2.4rem; margin-bottom: 10px; }
     .admin-header p { color: var(--text-secondary); max-width: 720px; margin: 0 auto; }
-    .card { background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 20px; padding: 28px; box-shadow: var(--card-shadow); max-width: 600px; margin: 0 auto; }
+    .card { background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 20px; padding: 28px; box-shadow: var(--card-shadow); max-width: min(90vw, 800px); margin: 0 auto; }
     .card h2 { margin-bottom: 20px; color: var(--accent-color); }
     .form-row { display: grid; gap: 10px; margin-bottom: 18px; }
     label { font-weight: 600; color: var(--text-secondary); }
@@ -25,6 +25,15 @@
     .back-link { text-align: center; margin-top: 20px; }
     .back-link a { color: var(--accent-color); text-decoration: none; }
     .back-link a:hover { text-decoration: underline; }
+    .rank-section { margin-bottom: 30px; }
+    .rank-section h3 { margin-bottom: 10px; color: var(--accent-color); font-size: 1.2rem; }
+    .winner-entry { display: flex; gap: 10px; align-items: center; margin-bottom: 10px; }
+    .winner-entry input, .winner-entry select { flex: 1; padding: 12px 14px; border: 1px solid var(--border-color); border-radius: 12px; background: var(--bg-primary); color: var(--text-primary); }
+    .winner-entry input::placeholder { color: var(--text-secondary); }
+    .remove-winner { background: #e74c3c; color: white; border: none; border-radius: 6px; padding: 6px 12px; cursor: pointer; transition: background 0.2s; }
+    .remove-winner:hover { background: #c0392b; }
+    .add-winner { background: var(--accent-color); color: white; border: none; border-radius: 8px; padding: 8px 16px; cursor: pointer; margin-top: 10px; transition: background 0.2s; }
+    .add-winner:hover { background: var(--accent-dark); }
   </style>
 </head>
 <body>
@@ -82,56 +91,76 @@
             <option value="">Select competition</option>
           </select>
         </div>
-        <div class="form-row">
-          <label>First place winner</label>
-          <input id="firstName" type="text" placeholder="First place name">
-          <select id="firstTeam">
-            <option value="">Select team</option>
-            <option value="Perinthattiri">Perinthattiri</option>
-            <option value="Kolapparamba">Kolapparamba</option>
-            <option value="Padinhattumutri Town">Padinhattumutri Town</option>
-            <option value="Padinhattumutri West">Padinhattumutri West</option>
-            <option value="Padinhattumutri East">Padinhattumutri East</option>
-            <option value="Kadoopuram">Kadoopuram</option>
-            <option value="Unnamthala">Unnamthala</option>
-            <option value="Pallipuram">Pallipuram</option>
-            <option value="Koottilangadi">Koottilangadi</option>
-            <option value="Cheloor">Cheloor</option>
-          </select>
-        </div>
-        <div class="form-row">
-          <label>Second place winner</label>
-          <input id="secondName" type="text" placeholder="Second place name">
-          <select id="secondTeam">
-            <option value="">Select team</option>
-            <option value="Perinthattiri">Perinthattiri</option>
-            <option value="Kolapparamba">Kolapparamba</option>
-            <option value="Padinhattumutri Town">Padinhattumutri Town</option>
-            <option value="Padinhattumutri West">Padinhattumutri West</option>
-            <option value="Padinhattumutri East">Padinhattumutri East</option>
-            <option value="Kadoopuram">Kadoopuram</option>
-            <option value="Unnamthala">Unnamthala</option>
-            <option value="Pallipuram">Pallipuram</option>
-            <option value="Koottilangadi">Koottilangadi</option>
-            <option value="Cheloor">Cheloor</option>
-          </select>
-        </div>
-        <div class="form-row">
-          <label>Third place winner</label>
-          <input id="thirdName" type="text" placeholder="Third place name">
-          <select id="thirdTeam">
-            <option value="">Select team</option>
-            <option value="Perinthattiri">Perinthattiri</option>
-            <option value="Kolapparamba">Kolapparamba</option>
-            <option value="Padinhattumutri Town">Padinhattumutri Town</option>
-            <option value="Padinhattumutri West">Padinhattumutri West</option>
-            <option value="Padinhattumutri East">Padinhattumutri East</option>
-            <option value="Kadoopuram">Kadoopuram</option>
-            <option value="Unnamthala">Unnamthala</option>
-            <option value="Pallipuram">Pallipuram</option>
-            <option value="Koottilangadi">Koottilangadi</option>
-            <option value="Cheloor">Cheloor</option>
-          </select>
+        <div id="winnersContainer">
+          <div class="rank-section" data-rank="1st" data-points="3">
+            <h3>1st Place Winners</h3>
+            <div class="winner-entries">
+              <div class="winner-entry">
+                <input type="text" class="winner-name" placeholder="Winner name">
+                <select class="winner-team">
+                  <option value="">Select team</option>
+                  <option value="Perinthattiri">Perinthattiri</option>
+                  <option value="Kolapparamba">Kolapparamba</option>
+                  <option value="Padinhattumutri Town">Padinhattumutri Town</option>
+                  <option value="Padinhattumutri West">Padinhattumutri West</option>
+                  <option value="Padinhattumutri East">Padinhattumutri East</option>
+                  <option value="Kadoopuram">Kadoopuram</option>
+                  <option value="Unnamthala">Unnamthala</option>
+                  <option value="Pallipuram">Pallipuram</option>
+                  <option value="Koottilangadi">Koottilangadi</option>
+                  <option value="Cheloor">Cheloor</option>
+                </select>
+                <button class="remove-winner" style="display:none;">Remove</button>
+              </div>
+            </div>
+            <button class="add-winner">Add Another 1st Place Winner</button>
+          </div>
+          <div class="rank-section" data-rank="2nd" data-points="2">
+            <h3>2nd Place Winners</h3>
+            <div class="winner-entries">
+              <div class="winner-entry">
+                <input type="text" class="winner-name" placeholder="Winner name">
+                <select class="winner-team">
+                  <option value="">Select team</option>
+                  <option value="Perinthattiri">Perinthattiri</option>
+                  <option value="Kolapparamba">Kolapparamba</option>
+                  <option value="Padinhattumutri Town">Padinhattumutri Town</option>
+                  <option value="Padinhattumutri West">Padinhattumutri West</option>
+                  <option value="Padinhattumutri East">Padinhattumutri East</option>
+                  <option value="Kadoopuram">Kadoopuram</option>
+                  <option value="Unnamthala">Unnamthala</option>
+                  <option value="Pallipuram">Pallipuram</option>
+                  <option value="Koottilangadi">Koottilangadi</option>
+                  <option value="Cheloor">Cheloor</option>
+                </select>
+                <button class="remove-winner" style="display:none;">Remove</button>
+              </div>
+            </div>
+            <button class="add-winner">Add Another 2nd Place Winner</button>
+          </div>
+          <div class="rank-section" data-rank="3rd" data-points="1">
+            <h3>3rd Place Winners</h3>
+            <div class="winner-entries">
+              <div class="winner-entry">
+                <input type="text" class="winner-name" placeholder="Winner name">
+                <select class="winner-team">
+                  <option value="">Select team</option>
+                  <option value="Perinthattiri">Perinthattiri</option>
+                  <option value="Kolapparamba">Kolapparamba</option>
+                  <option value="Padinhattumutri Town">Padinhattumutri Town</option>
+                  <option value="Padinhattumutri West">Padinhattumutri West</option>
+                  <option value="Padinhattumutri East">Padinhattumutri East</option>
+                  <option value="Kadoopuram">Kadoopuram</option>
+                  <option value="Unnamthala">Unnamthala</option>
+                  <option value="Pallipuram">Pallipuram</option>
+                  <option value="Koottilangadi">Koottilangadi</option>
+                  <option value="Cheloor">Cheloor</option>
+                </select>
+                <button class="remove-winner" style="display:none;">Remove</button>
+              </div>
+            </div>
+            <button class="add-winner">Add Another 3rd Place Winner</button>
+          </div>
         </div>
         <div class="button-group">
           <button id="saveResultBtn">Save Winners</button>
@@ -255,10 +284,44 @@
       document.getElementById('thirdName').value = '';
       document.getElementById('thirdTeam').value = '';
 
-      showMessage(adminResultMessage, 'First/second/third winners saved successfully.');
+      showMessage(adminResultMessage, 'Winners saved successfully.');
     }
 
     saveResultBtn.addEventListener('click', saveResult);
+
+    document.addEventListener('click', (e) => {
+
+      if (e.target.classList.contains('add-winner')) {
+
+        const section = e.target.closest('.rank-section');
+
+        const entries = section.querySelector('.winner-entries');
+
+        const newEntry = entries.querySelector('.winner-entry').cloneNode(true);
+
+        newEntry.querySelector('.winner-name').value = '';
+
+        newEntry.querySelector('.winner-team').value = '';
+
+        newEntry.querySelector('.remove-winner').style.display = 'inline-block';
+
+        entries.appendChild(newEntry);
+
+      } else if (e.target.classList.contains('remove-winner')) {
+
+        const entry = e.target.closest('.winner-entry');
+
+        const entries = entry.parentElement;
+
+        if (entries.children.length > 1) {
+
+          entry.remove();
+
+        }
+
+      }
+
+    });
   </script>
 
   <script src="script.js"></script>

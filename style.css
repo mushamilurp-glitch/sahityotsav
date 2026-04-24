@@ -338,7 +338,7 @@ html.dark-mode .hero {
    ============================================ */
 
 /* Tablet (768px and below) */
-@media (max-width: 768px) {
+@media (min-width: 768px) {
   .navbar {
     padding: 12px 20px;
     flex-wrap: wrap;
@@ -406,6 +406,7 @@ html.dark-mode .hero {
   .ssf {
     font-size: 1.5rem;
     letter-spacing: 1px;
+    display: block;
   }
 
   .hero-text {
