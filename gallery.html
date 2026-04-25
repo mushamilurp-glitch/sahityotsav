@@ -194,20 +194,8 @@
   </div>
 
   <script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-app.js";
-    import { getFirestore, collection, getDocs, query, orderBy } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-firestore.js";
-
-    const firebaseConfig = {
-      apiKey: "AIzaSyDec5_HyV8LGmOTaDnW7G74mQwT0JVGt00",
-      authDomain: "sahityotsav-koottilangadi.firebaseapp.com",
-      projectId: "sahityotsav-koottilangadi",
-      storageBucket: "sahityotsav-koottilangadi.firebasestorage.app",
-      messagingSenderId: "397138020015",
-      appId: "1:397138020015:web:8296646970c71f2cf1f65a"
-    };
-
-    const app = initializeApp(firebaseConfig);
-    const db = getFirestore(app);
+    // API Base URL - change this to your backend URL
+    const API_BASE = 'http://localhost:3000/api';
 
     const loadingSpinner = document.getElementById('loadingSpinner');
     const noImagesMessage = document.getElementById('noImagesMessage');
@@ -218,27 +206,9 @@
     const modalDate = document.getElementById('modalDate');
     const modalClose = document.getElementById('modalClose');
 
-    // Function to convert Google Drive share link to direct view link
-    function getDriveImageUrl(driveLink) {
-      // Extract file ID from various Google Drive link formats
-      let fileId = '';
-
-      if (driveLink.includes('drive.google.com/file/d/')) {
-        fileId = driveLink.split('/file/d/')[1].split('/')[0];
-      } else if (driveLink.includes('drive.google.com/open?id=')) {
-        fileId = driveLink.split('open?id=')[1].split('&')[0];
-      } else if (driveLink.includes('drive.google.com/uc?id=')) {
-        fileId = driveLink.split('uc?id=')[1].split('&')[0];
-      } else if (driveLink.match(/[a-zA-Z0-9-_]{25,}/)) {
-        // Direct file ID
-        fileId = driveLink.match(/[a-zA-Z0-9-_]{25,}/)[0];
-      }
-
-      if (fileId) {
-        return `https://drive.google.com/uc?export=view&id=${fileId}`;
-      }
-
-      return driveLink; // Return original if can't parse
+    // Function to get image URL (Cloudinary URLs are direct links)
+    function getImageUrl(imageUrl) {
+      return imageUrl; // Cloudinary provides direct URLs
     }
 
     // Function to format date
@@ -254,30 +224,33 @@
 
     async function loadGallery() {
       try {
-        const q = query(collection(db, 'gallery'), orderBy('createdAt', 'desc'));
-        const snapshot = await getDocs(q);
+        const response = await fetch(`${API_BASE}/gallery`);
+        if (!response.ok) {
+          throw new Error('Failed to fetch gallery');
+        }
 
-        if (snapshot.empty) {
+        const images = await response.json();
+
+        if (images.length === 0) {
           loadingSpinner.style.display = 'none';
           noImagesMessage.style.display = 'block';
           return;
         }
 
-        snapshot.forEach(doc => {
-          const data = doc.data();
-          const imageUrl = getDriveImageUrl(data.imageUrl || data.driveLink || '');
+        images.forEach((image) => {
+          const imageUrl = image.image_url; // Cloudinary URLs are direct links
 
           const card = document.createElement('div');
           card.className = 'gallery-card';
-          card.onclick = () => openModal(data, imageUrl);
+          card.onclick = () => openModal(image, imageUrl);
 
           card.innerHTML = `
-            <img src="${imageUrl}" alt="${data.title || 'Gallery Image'}" class="gallery-image" loading="lazy">
+            <img src="${imageUrl}" alt="${image.title || 'Gallery Image'}" class="gallery-image" loading="lazy">
             <div class="gallery-info">
-              <div class="gallery-title">${data.title || 'Event Photo'}</div>
+              <div class="gallery-title">${image.title || 'Event Photo'}</div>
               <div class="gallery-meta">
-                <span><i class="fas fa-calendar"></i> ${formatDate(data.createdAt)}</span>
-                ${data.category ? `<span><i class="fas fa-tag"></i> ${data.category}</span>` : ''}
+                <span><i class="fas fa-calendar"></i> ${formatDate(image.created_at)}</span>
+                ${image.category ? `<span><i class="fas fa-tag"></i> ${image.category}</span>` : ''}
               </div>
             </div>
           `;
@@ -297,7 +270,7 @@
     function openModal(data, imageUrl) {
       modalImage.src = imageUrl;
       modalTitle.textContent = data.title || 'Event Photo';
-      modalDate.textContent = formatDate(data.createdAt);
+      modalDate.textContent = formatDate(data.created_at);
       imageModal.style.display = 'flex';
       document.body.style.overflow = 'hidden';
     }

@@ -77,20 +77,8 @@
   </section>
 
   <script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-app.js";
-    import { getFirestore, collection, getDocs, doc, getDoc } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-firestore.js";
-
-    const firebaseConfig = {
-      apiKey: "AIzaSyDec5_HyV8LGmOTaDnW7G74mQwT0JVGt00",
-      authDomain: "sahityotsav-koottilangadi.firebaseapp.com",
-      projectId: "sahityotsav-koottilangadi",
-      storageBucket: "sahityotsav-koottilangadi.firebasestorage.app",
-      messagingSenderId: "397138020015",
-      appId: "1:397138020015:web:8296646970c71f2cf1f65a"
-    };
-
-    const app = initializeApp(firebaseConfig);
-    const db = getFirestore(app);
+    // API Base URL - change this to your backend URL
+    const API_BASE = 'http://localhost:3000/api';
 
     const loadingSpinner = document.getElementById('loadingSpinner');
     const leaderboardList = document.getElementById('leaderboardList');
@@ -98,36 +86,27 @@
 
     async function loadLeaderboard() {
       try {
-        // Get results declared count
-        const metaSnap = await getDoc(doc(db, 'meta', 'summary'));
-        const resultsDeclared = metaSnap.data()?.resultsDeclared || 0;
-        declaredCount.textContent = resultsDeclared;
+        // Fetch leaderboard data from API
+        const response = await fetch(`${API_BASE}/leaderboard`);
+        if (!response.ok) {
+          throw new Error('Failed to fetch leaderboard');
+        }
 
-        // Get leaderboard data
-        const snapshot = await getDocs(collection(db, 'leaderboard'));
+        const data = await response.json();
 
-        let teams = [];
-
-        snapshot.forEach(docSnap => {
-          teams.push({
-            team: docSnap.id,
-            points: docSnap.data().points || 0
-          });
-        });
-
-        // Sort by points (descending)
-        teams.sort((a, b) => b.points - a.points);
+        // Update results declared count
+        declaredCount.textContent = data.resultsDeclared || 0;
 
         // Clear existing content
         leaderboardList.innerHTML = '';
 
         // Display teams
-        teams.forEach((team, index) => {
+        data.leaderboard.forEach((team) => {
           const item = document.createElement('div');
           item.className = 'leaderboard-item';
 
           item.innerHTML = `
-            <div class="rank">${index + 1}</div>
+            <div class="rank">${team.rank}</div>
             <div class="team-info">
               <div class="team-name">${team.team}</div>
               <div class="team-points">${team.points} points</div>

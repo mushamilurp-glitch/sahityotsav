@@ -106,21 +106,8 @@
 
   <!-- Firebase Config -->
   <script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-app.js";
-    import { getFirestore, collection, query, where, getDocs } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-firestore.js";
-
-    // Your Firebase configuration
-    const firebaseConfig = {
-      apiKey: "AIzaSyDec5_HyV8LGmOTaDnW7G74mQwT0JVGt00",
-      authDomain: "sahityotsav-koottilangadi.firebaseapp.com",
-      projectId: "sahityotsav-koottilangadi",
-      storageBucket: "sahityotsav-koottilangadi.firebasestorage.app",
-      messagingSenderId: "397138020015",
-      appId: "1:397138020015:web:8296646970c71f2cf1f65a"
-    };
-
-    const app = initializeApp(firebaseConfig);
-    const db = getFirestore(app);
+    // API Base URL - change this to your backend URL
+    const API_BASE = 'http://localhost:3000/api';
 
     // Competition structure for each category (fallback list)
     const competitions = {
@@ -144,21 +131,15 @@
     // Function to fetch competitions for a category
     async function fetchCompetitionsForCategory(category) {
       try {
-        const q = query(collection(db, 'results'), where('category', '==', category));
-        const querySnapshot = await getDocs(q);
-        
-        const compSet = new Set();
-        querySnapshot.forEach((doc) => {
-          const data = doc.data();
-          if (data.competition) {
-            compSet.add(data.competition);
-          }
-        });
-        
-        return Array.from(compSet).sort();
+        const response = await fetch(`${API_BASE}/results/competitions/${category}`);
+        if (!response.ok) {
+          throw new Error('Failed to fetch competitions');
+        }
+        const data = await response.json();
+        return data;
       } catch (error) {
         console.error('Error fetching competitions:', error);
-        return [];
+        return competitions[category] || [];
       }
     }
 
@@ -167,16 +148,13 @@
       const selectedCategory = e.target.value;
       competitionFilter.innerHTML = '<option value="">-- Choose a Competition --</option>';
       competitionFilter.disabled = true;
-      
+
       if (selectedCategory) {
         loadingSpinner.style.display = 'flex';
         noSelectionMessage.style.display = 'none';
-        
+
         let comps = await fetchCompetitionsForCategory(selectedCategory);
-        if (!comps.length && competitions[selectedCategory]) {
-          comps = competitions[selectedCategory];
-        }
-        
+
         if (comps.length > 0) {
           competitionFilter.disabled = false;
           comps.forEach((comp) => {
@@ -186,7 +164,7 @@
             competitionFilter.appendChild(option);
           });
         }
-        
+
         loadingSpinner.style.display = 'none';
         resetResultsView();
       } else {
@@ -211,39 +189,25 @@
       loadingSpinner.style.display = 'flex';
 
       try {
-        // Query Firestore for results matching both category and competition
-        const q = query(
-          collection(db, 'results'),
-          where('category', '==', selectedCategory),
-          where('competition', '==', selectedCompetition)
-        );
-
-        const querySnapshot = await getDocs(q);
-
-        if (querySnapshot.empty) {
-          // No results found
-          loadingSpinner.style.display = 'none';
-          noResultsMessage.style.display = 'flex';
-          resultsContainer.style.display = 'none';
-          return;
+        // Fetch results from API
+        const response = await fetch(`${API_BASE}/results/${selectedCategory}/${selectedCompetition}`);
+        if (!response.ok) {
+          if (response.status === 404) {
+            throw new Error('No results found');
+          }
+          throw new Error('Failed to fetch results');
         }
+
+        const results = await response.json();
 
         // Populate table with results
         resultsBody.innerHTML = '';
         let rank = 1;
 
-        const results = [];
-        querySnapshot.forEach((doc) => {
-          results.push({ id: doc.id, ...doc.data() });
-        });
-
-        // Sort by points (descending)
-        results.sort((a, b) => (b.points || 0) - (a.points || 0));
-
         results.forEach((result) => {
           const row = document.createElement('tr');
           row.innerHTML = `
-            <td><strong>#${rank}</strong></td>
+            <td><strong>#${result.rank}</strong></td>
             <td>${result.name || 'N/A'}</td>
             <td>${result.category || 'N/A'}</td>
             <td>${result.competition || 'N/A'}</td>
@@ -263,8 +227,14 @@
       } catch (error) {
         console.error('Error fetching results:', error);
         loadingSpinner.style.display = 'none';
-        noResultsMessage.style.display = 'flex';
-        noResultsMessage.innerHTML = '<i class="fas fa-exclamation-circle"></i><p>Error loading results. Please try again.</p>';
+        if (error.message === 'No results found') {
+          noResultsMessage.style.display = 'flex';
+          resultsContainer.style.display = 'none';
+        } else {
+          noResultsMessage.innerHTML = '<i class="fas fa-exclamation-circle"></i><p>Error loading results. Please try again.</p>';
+          noResultsMessage.style.display = 'flex';
+          resultsContainer.style.display = 'none';
+        }
       }
     });
 

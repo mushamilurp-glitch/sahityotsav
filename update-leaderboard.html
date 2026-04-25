@@ -128,22 +128,8 @@
   </section>
 
   <script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-app.js";
-    import { getFirestore, setDoc, doc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-firestore.js";
-    import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-auth.js";
-
-    const firebaseConfig = {
-      apiKey: "AIzaSyDec5_HyV8LGmOTaDnW7G74mQwT0JVGt00",
-      authDomain: "sahityotsav-koottilangadi.firebaseapp.com",
-      projectId: "sahityotsav-koottilangadi",
-      storageBucket: "sahityotsav-koottilangadi.firebasestorage.app",
-      messagingSenderId: "397138020015",
-      appId: "1:397138020015:web:8296646970c71f2cf1f65a"
-    };
-
-    const app = initializeApp(firebaseConfig);
-    const db = getFirestore(app);
-    const auth = getAuth(app);
+    // API Base URL - change this to your backend URL
+    const API_BASE = 'http://localhost:3000/api';
 
     const saveLeaderboardBtn = document.getElementById('saveLeaderboardBtn');
     const adminStatusMessage = document.getElementById('adminStatusMessage');
@@ -161,20 +147,56 @@
       { id: 'Cheloor', name: 'Cheloor' }
     ];
 
+    // Check authentication on page load
+    async function checkAuth() {
+      const token = localStorage.getItem('authToken');
+      if (!token) {
+        alert('Please sign in to access the admin portal.');
+        window.location.href = 'login.html';
+        return;
+      }
+
+      try {
+        const response = await fetch(`${API_BASE}/auth/verify`, {
+          headers: {
+            'Authorization': `Bearer ${token}`
+          }
+        });
+
+        if (!response.ok) {
+          throw new Error('Invalid token');
+        }
+
+        const data = await response.json();
+        if (data.user.role !== 'admin') {
+          alert('Admin access required.');
+          window.location.href = 'login.html';
+          return;
+        }
+      } catch (error) {
+        console.error('Auth check failed:', error);
+        alert('Please sign in to access the admin portal.');
+        window.location.href = 'login.html';
+      }
+    }
+
     function showMessage(element, text, isError = false) {
       element.textContent = text;
       element.style.color = isError ? '#e74c3c' : 'var(--text-secondary)';
       setTimeout(() => { element.textContent = ''; }, 4000);
     }
 
-    onAuthStateChanged(auth, (user) => {
-      if (!user) {
-        alert('Please sign in to access the admin portal.');
-        window.location.href = 'login.html';
-      }
-    });
+    // Check auth on page load
+    checkAuth();
 
     async function saveLeaderboard() {
+      const token = localStorage.getItem('authToken');
+      if (!token) {
+        alert('Please sign in again.');
+        window.location.href = 'login.html';
+        return;
+      }
+
       const declaredCount = Number(document.getElementById('resultsDeclaredCount').value);
 
       if (Number.isNaN(declaredCount)) {
@@ -190,21 +212,22 @@
       }
 
       try {
-        // Save results declared count
-        await setDoc(doc(db, 'meta', 'summary'), {
-          resultsDeclared: declaredCount,
-          updatedAt: serverTimestamp()
-        }, { merge: true });
+        const response = await fetch(`${API_BASE}/leaderboard`, {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`
+          },
+          body: JSON.stringify({
+            teams: teamUpdates,
+            resultsDeclared: declaredCount
+          })
+        });
 
-        // Save all team points
-        const updatePromises = teamUpdates.map(({ name, points }) =>
-          setDoc(doc(db, 'leaderboard', name), {
-            points,
-            updatedAt: serverTimestamp()
-          }, { merge: true })
-        );
-
-        await Promise.all(updatePromises);
+        if (!response.ok) {
+          const errorData = await response.json();
+          throw new Error(errorData.error || 'Failed to update leaderboard');
+        }
 
         // Clear all inputs
         document.getElementById('resultsDeclaredCount').value = '';
@@ -213,9 +236,10 @@
         });
 
         showMessage(adminStatusMessage, 'Leaderboard and results count updated successfully.');
+
       } catch (error) {
         console.error('Error updating leaderboard:', error);
-        showMessage(adminStatusMessage, 'Error updating leaderboard. Please try again.', true);
+        showMessage(adminStatusMessage, error.message || 'Error updating leaderboard. Please try again.', true);
       }
     }
 

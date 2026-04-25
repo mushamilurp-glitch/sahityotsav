@@ -175,22 +175,8 @@
   </section>
 
   <script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-app.js";
-    import { getFirestore, collection, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-firestore.js";
-    import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-auth.js";
-
-    const firebaseConfig = {
-      apiKey: "AIzaSyDec5_HyV8LGmOTaDnW7G74mQwT0JVGt00",
-      authDomain: "sahityotsav-koottilangadi.firebaseapp.com",
-      projectId: "sahityotsav-koottilangadi",
-      storageBucket: "sahityotsav-koottilangadi.firebasestorage.app",
-      messagingSenderId: "397138020015",
-      appId: "1:397138020015:web:8296646970c71f2cf1f65a"
-    };
-
-    const app = initializeApp(firebaseConfig);
-    const db = getFirestore(app);
-    const auth = getAuth(app);
+    // API Base URL - change this to your backend URL
+    const API_BASE = 'http://localhost:3000/api';
 
     const saveResultBtn = document.getElementById('saveResultBtn');
     const adminResultMessage = document.getElementById('adminResultMessage');
@@ -204,6 +190,39 @@
       Senior: ['Political Debate', 'Mappila Song', 'Hamd Urdu', 'Poem Recitation English', 'Elocution Malayalam', 'Elocution English', 'Elocution Urdu', "Musha'ara Alfiya", 'Poem Making', 'Poem Making English', 'Story Writing', 'Book Test', 'Essay Writing Malayalam', 'Essay Writing English', 'Essay Writing Urdu', 'Translation English', 'Madh Gana Rachana', 'Mudravakya Rachana', 'Quiz', 'Feature Writing', 'Social Text', 'Poster Designing', 'E-poster', 'Digital Illustration', 'Dgital Painting'],
       General: ['Spot Magazine', 'Duff', 'Arabana', 'Group Song Cat-A', 'Group Song Cat-B', 'Moulid Recitation', 'Qaseeda Recitation', 'Viplavagaanam', 'Chumarezhuth', 'Malappattu', 'Risala Quiz', 'Qawwali', 'Viplava Gana Rachana', 'Mappilappattu Rachana', 'Project', 'Collage', 'Nasheeda', 'Family Magazine']
     };
+
+    // Check authentication on page load
+    async function checkAuth() {
+      const token = localStorage.getItem('authToken');
+      if (!token) {
+        alert('Please sign in to access the admin portal.');
+        window.location.href = 'login.html';
+        return;
+      }
+
+      try {
+        const response = await fetch(`${API_BASE}/auth/verify`, {
+          headers: {
+            'Authorization': `Bearer ${token}`
+          }
+        });
+
+        if (!response.ok) {
+          throw new Error('Invalid token');
+        }
+
+        const data = await response.json();
+        if (data.user.role !== 'admin') {
+          alert('Admin access required.');
+          window.location.href = 'login.html';
+          return;
+        }
+      } catch (error) {
+        console.error('Auth check failed:', error);
+        alert('Please sign in to access the admin portal.');
+        window.location.href = 'login.html';
+      }
+    }
 
     function showMessage(element, text, isError = false) {
       element.textContent = text;
@@ -229,98 +248,117 @@
       competitionSelect.disabled = false;
     }
 
-    onAuthStateChanged(auth, (user) => {
-      if (!user) {
-        alert('Please sign in to access the admin portal.');
-        window.location.href = 'login.html';
-      }
-    });
+    // Check auth on page load
+    checkAuth();
 
     document.getElementById('adminCategory').addEventListener('change', (e) => {
       populateCompetitions(e.target.value);
     });
 
     async function saveResult() {
-      const category = document.getElementById('adminCategory').value;
-      const competition = document.getElementById('adminCompetition').value;
-      const firstName = document.getElementById('firstName').value.trim();
-      const firstTeam = document.getElementById('firstTeam').value.trim();
-      const secondName = document.getElementById('secondName').value.trim();
-      const secondTeam = document.getElementById('secondTeam').value.trim();
-      const thirdName = document.getElementById('thirdName').value.trim();
-      const thirdTeam = document.getElementById('thirdTeam').value.trim();
-
-      if (!category || !competition || !firstName || !firstTeam || !secondName || !secondTeam || !thirdName || !thirdTeam) {
-        showMessage(adminResultMessage, 'Please fill all winner names and team names.', true);
+      const token = localStorage.getItem('authToken');
+      if (!token) {
+        alert('Please sign in again.');
+        window.location.href = 'login.html';
         return;
       }
 
-      const entries = [
-        { position: '1st', name: firstName, team: firstTeam, points: 3 },
-        { position: '2nd', name: secondName, team: secondTeam, points: 2 },
-        { position: '3rd', name: thirdName, team: thirdTeam, points: 1 }
-      ];
+      const category = document.getElementById('adminCategory').value;
+      const competition = document.getElementById('adminCompetition').value;
 
-      for (const entry of entries) {
-        await addDoc(collection(db, 'results'), {
-          category,
-          competition,
-          position: entry.position,
-          name: entry.name,
-          team: entry.team,
-          points: entry.points,
-          status: 'Completed',
-          createdAt: serverTimestamp()
+      if (!category || !competition) {
+        showMessage(adminResultMessage, 'Please select category and competition.', true);
+        return;
+      }
+
+      // Collect all winners from the dynamic form
+      const winners = [];
+      const rankSections = document.querySelectorAll('.rank-section');
+
+      for (const section of rankSections) {
+        const rank = section.dataset.rank;
+        const points = parseInt(section.dataset.points);
+        const winnerEntries = section.querySelectorAll('.winner-entry');
+
+        winnerEntries.forEach((entry) => {
+          const nameInput = entry.querySelector('.winner-name');
+          const teamSelect = entry.querySelector('.winner-team');
+
+          const name = nameInput.value.trim();
+          const team = teamSelect.value.trim();
+
+          if (name && team) {
+            winners.push({
+              category,
+              competition,
+              position: rank,
+              name,
+              team,
+              points,
+              status: 'Completed'
+            });
+          }
         });
       }
 
-      document.getElementById('adminCompetition').value = '';
-      document.getElementById('adminCategory').value = '';
-      document.getElementById('adminCompetition').disabled = true;
-      document.getElementById('firstName').value = '';
-      document.getElementById('firstTeam').value = '';
-      document.getElementById('secondName').value = '';
-      document.getElementById('secondTeam').value = '';
-      document.getElementById('thirdName').value = '';
-      document.getElementById('thirdTeam').value = '';
+      if (winners.length === 0) {
+        showMessage(adminResultMessage, 'Please enter at least one winner.', true);
+        return;
+      }
 
-      showMessage(adminResultMessage, 'Winners saved successfully.');
+      try {
+        const response = await fetch(`${API_BASE}/results`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`
+          },
+          body: JSON.stringify({ results: winners })
+        });
+
+        if (!response.ok) {
+          const errorData = await response.json();
+          throw new Error(errorData.error || 'Failed to save results');
+        }
+
+        // Clear form
+        document.getElementById('adminCompetition').value = '';
+        document.getElementById('adminCategory').value = '';
+        document.getElementById('adminCompetition').disabled = true;
+
+        // Clear all winner inputs
+        document.querySelectorAll('.winner-name').forEach(input => input.value = '');
+        document.querySelectorAll('.winner-team').forEach(select => select.value = '');
+
+        showMessage(adminResultMessage, 'Winners saved successfully.');
+
+      } catch (error) {
+        console.error('Error saving results:', error);
+        showMessage(adminResultMessage, error.message || 'Error saving results. Please try again.', true);
+      }
     }
 
     saveResultBtn.addEventListener('click', saveResult);
 
     document.addEventListener('click', (e) => {
-
       if (e.target.classList.contains('add-winner')) {
-
         const section = e.target.closest('.rank-section');
-
         const entries = section.querySelector('.winner-entries');
-
         const newEntry = entries.querySelector('.winner-entry').cloneNode(true);
 
         newEntry.querySelector('.winner-name').value = '';
-
         newEntry.querySelector('.winner-team').value = '';
-
         newEntry.querySelector('.remove-winner').style.display = 'inline-block';
 
         entries.appendChild(newEntry);
-
       } else if (e.target.classList.contains('remove-winner')) {
-
         const entry = e.target.closest('.winner-entry');
-
         const entries = entry.parentElement;
 
         if (entries.children.length > 1) {
-
           entry.remove();
-
         }
-
       }
-
     });
   </script>
 
