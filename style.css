@@ -290,6 +290,118 @@ html.dark-mode .hero {
   box-shadow: 0 8px 16px rgba(212, 175, 55, 0.2);
 }
 
+.donate-section {
+  padding: 80px 30px;
+  background-color: var(--bg-secondary);
+  transition: background-color 0.3s ease;
+}
+
+.donate-section h2 {
+  font-size: 2.5rem;
+  color: var(--accent-color);
+  margin-bottom: 20px;
+  text-align: center;
+}
+
+.donate-section p {
+  font-size: 1.05rem;
+  color: var(--text-secondary);
+  text-align: center;
+  max-width: 800px;
+  margin: 0 auto;
+  line-height: 1.8;
+}
+
+.donate-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(280px, 1fr));
+  gap: 30px;
+  margin-top: 40px;
+}
+
+.donate-card {
+  background-color: var(--card-bg);
+  padding: 30px;
+  border-radius: 18px;
+  border: 1px solid var(--border-color);
+  box-shadow: var(--card-shadow);
+}
+
+.qr-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
+  text-align: center;
+}
+
+.qr-card h3,
+.donate-card h3 {
+  color: var(--text-primary);
+  font-size: 1.5rem;
+  margin-bottom: 0;
+}
+
+.qr-card img {
+  max-width: 100%;
+  height: auto;
+  border-radius: 16px;
+  border: 1px solid var(--border-color);
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.08);
+}
+
+.donate-details {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.donate-details ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: grid;
+  gap: 16px;
+}
+
+.donate-details li {
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+  color: var(--text-secondary);
+}
+
+.donate-details li .icon {
+  color: var(--accent-color);
+  min-width: 24px;
+  font-size: 1.2rem;
+  line-height: 1.2;
+}
+
+.donate-cta {
+  padding: 18px 20px;
+  border-radius: 12px;
+  border: 1px dashed var(--accent-color);
+  background-color: rgba(212, 175, 55, 0.1);
+  color: var(--text-primary);
+}
+
+.donate-cta strong {
+  color: var(--accent-dark);
+}
+
+.small-text {
+  color: var(--text-secondary);
+  font-size: 0.95rem;
+  line-height: 1.6;
+}
+
+@media (max-width: 900px) {
+  .donate-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
 /* HAMBURGER MENU */
 .hamburger {
   display: none;
