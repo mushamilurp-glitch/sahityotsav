@@ -75,7 +75,7 @@ router.get('/:category/:competition', async (req, res) => {
     const { category, competition } = req.params;
 
     const query = sql`
-      SELECT name, category, competition, points, status, team
+      SELECT name, category, competition, position as rank, points, status, team
       FROM results
       WHERE category = ${category} AND competition = ${competition}
       ORDER BY points DESC, created_at ASC
@@ -83,17 +83,7 @@ router.get('/:category/:competition', async (req, res) => {
 
     const result = await query;
 
-    if (result.length === 0) {
-      return res.status(404).json({ error: 'No results found' });
-    }
-
-    // Add rank to each result
-    const resultsWithRank = result.map((row, index) => ({
-      rank: index + 1,
-      ...row
-    }));
-
-    res.json(resultsWithRank);
+    res.json({ results: result });
 
   } catch (error) {
     console.error('Error fetching results:', error);
@@ -128,6 +118,30 @@ router.post('/', authenticateToken, requireAdmin, async (req, res) => {
 
   } catch (error) {
     console.error('Error adding results:', error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
+// Delete results for a specific category and competition (admin only)
+router.delete('/:category/:competition', authenticateToken, requireAdmin, async (req, res) => {
+  try {
+    const { category, competition } = req.params;
+
+    const deleteQuery = sql`
+      DELETE FROM results
+      WHERE category = ${category} AND competition = ${competition}
+    `;
+
+    const result = await deleteQuery;
+
+    if (result.length === 0) {
+      return res.status(404).json({ error: 'No results found to delete' });
+    }
+
+    res.json({ message: 'Results deleted successfully', deletedCount: result.length });
+
+  } catch (error) {
+    console.error('Error deleting results:', error);
     res.status(500).json({ error: 'Internal server error' });
   }
 });

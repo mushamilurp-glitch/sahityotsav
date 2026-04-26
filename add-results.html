@@ -91,80 +91,26 @@
             <option value="">Select competition</option>
           </select>
         </div>
-        <div id="winnersContainer">
-          <div class="rank-section" data-rank="1st" data-points="3">
-            <h3>1st Place Winners</h3>
-            <div class="winner-entries">
-              <div class="winner-entry">
-                <input type="text" class="winner-name" placeholder="Winner name">
-                <select class="winner-team">
-                  <option value="">Select team</option>
-                  <option value="Perinthattiri">Perinthattiri</option>
-                  <option value="Kolapparamba">Kolapparamba</option>
-                  <option value="Padinhattumutri Town">Padinhattumutri Town</option>
-                  <option value="Padinhattumutri West">Padinhattumutri West</option>
-                  <option value="Padinhattumutri East">Padinhattumutri East</option>
-                  <option value="Kadoopuram">Kadoopuram</option>
-                  <option value="Unnamthala">Unnamthala</option>
-                  <option value="Pallipuram">Pallipuram</option>
-                  <option value="Koottilangadi">Koottilangadi</option>
-                  <option value="Cheloor">Cheloor</option>
-                </select>
-                <button class="remove-winner" style="display:none;">Remove</button>
-              </div>
-            </div>
-            <button class="add-winner">Add Another 1st Place Winner</button>
-          </div>
-          <div class="rank-section" data-rank="2nd" data-points="2">
-            <h3>2nd Place Winners</h3>
-            <div class="winner-entries">
-              <div class="winner-entry">
-                <input type="text" class="winner-name" placeholder="Winner name">
-                <select class="winner-team">
-                  <option value="">Select team</option>
-                  <option value="Perinthattiri">Perinthattiri</option>
-                  <option value="Kolapparamba">Kolapparamba</option>
-                  <option value="Padinhattumutri Town">Padinhattumutri Town</option>
-                  <option value="Padinhattumutri West">Padinhattumutri West</option>
-                  <option value="Padinhattumutri East">Padinhattumutri East</option>
-                  <option value="Kadoopuram">Kadoopuram</option>
-                  <option value="Unnamthala">Unnamthala</option>
-                  <option value="Pallipuram">Pallipuram</option>
-                  <option value="Koottilangadi">Koottilangadi</option>
-                  <option value="Cheloor">Cheloor</option>
-                </select>
-                <button class="remove-winner" style="display:none;">Remove</button>
-              </div>
-            </div>
-            <button class="add-winner">Add Another 2nd Place Winner</button>
-          </div>
-          <div class="rank-section" data-rank="3rd" data-points="1">
-            <h3>3rd Place Winners</h3>
-            <div class="winner-entries">
-              <div class="winner-entry">
-                <input type="text" class="winner-name" placeholder="Winner name">
-                <select class="winner-team">
-                  <option value="">Select team</option>
-                  <option value="Perinthattiri">Perinthattiri</option>
-                  <option value="Kolapparamba">Kolapparamba</option>
-                  <option value="Padinhattumutri Town">Padinhattumutri Town</option>
-                  <option value="Padinhattumutri West">Padinhattumutri West</option>
-                  <option value="Padinhattumutri East">Padinhattumutri East</option>
-                  <option value="Kadoopuram">Kadoopuram</option>
-                  <option value="Unnamthala">Unnamthala</option>
-                  <option value="Pallipuram">Pallipuram</option>
-                  <option value="Koottilangadi">Koottilangadi</option>
-                  <option value="Cheloor">Cheloor</option>
-                </select>
-                <button class="remove-winner" style="display:none;">Remove</button>
-              </div>
-            </div>
-            <button class="add-winner">Add Another 3rd Place Winner</button>
+
+        <!-- Existing Results Section -->
+        <div id="existingResultsSection" style="display: none;">
+          <h3 style="color: var(--accent-color); margin-top: 20px;">Existing Results</h3>
+          <div id="existingResults" class="existing-results-list" style="margin-bottom: 20px;"></div>
+          <div class="button-group">
+            <button id="editResultsBtn" style="background: #f39c12;">Edit Results</button>
+            <button id="deleteResultsBtn" style="background: #e74c3c;">Delete All Results</button>
           </div>
         </div>
-        <div class="button-group">
-          <button id="saveResultBtn">Save Winners</button>
+
+        <!-- Add Results Form -->
+        <div id="addResultsForm">
+          <h3 style="color: var(--accent-color); margin-top: 20px;">Add New Results</h3>
+          <div id="winnersContainer"></div>
+          <div class="button-group">
+            <button id="saveResultBtn">Save Winners</button>
+          </div>
         </div>
+
         <p id="adminResultMessage" class="status-note"></p>
       </div>
 
@@ -255,6 +201,195 @@
       populateCompetitions(e.target.value);
     });
 
+    // Check for existing results when competition is selected
+    adminCompetition.addEventListener('change', async () => {
+      const category = adminCategory.value;
+      const competition = adminCompetition.value;
+
+      if (category && competition) {
+        await checkExistingResults(category, competition);
+      } else {
+        document.getElementById('existingResultsSection').style.display = 'none';
+        document.getElementById('addResultsForm').style.display = 'block';
+      }
+    });
+
+    // Check for existing results
+    async function checkExistingResults(category, competition) {
+      try {
+        const token = localStorage.getItem('authToken');
+        if (!token) {
+          showMessage(adminResultMessage, 'Please login first.', true);
+          return;
+        }
+
+        const response = await fetch(`${API_BASE}/results/${category}/${competition}`, {
+          headers: {
+            'Authorization': `Bearer ${token}`
+          }
+        });
+
+        if (response.ok) {
+          const data = await response.json();
+          if (data.results && data.results.length > 0) {
+            displayExistingResults(data.results);
+            document.getElementById('existingResultsSection').style.display = 'block';
+            document.getElementById('addResultsForm').style.display = 'none';
+          } else {
+            document.getElementById('existingResultsSection').style.display = 'none';
+            document.getElementById('addResultsForm').style.display = 'block';
+          }
+        } else {
+          document.getElementById('existingResultsSection').style.display = 'none';
+          document.getElementById('addResultsForm').style.display = 'block';
+        }
+      } catch (error) {
+        console.error('Error checking existing results:', error);
+        document.getElementById('existingResultsSection').style.display = 'none';
+        document.getElementById('addResultsForm').style.display = 'block';
+      }
+    }
+
+    // Display existing results
+    function displayExistingResults(results) {
+      const existingResultsDiv = document.getElementById('existingResults');
+      existingResultsDiv.innerHTML = '';
+
+      // Group results by rank
+      const resultsByRank = {};
+      results.forEach(result => {
+        if (!resultsByRank[result.rank]) {
+          resultsByRank[result.rank] = [];
+        }
+        resultsByRank[result.rank].push(result);
+      });
+
+      // Display results for each rank
+      Object.keys(resultsByRank).sort().forEach(rank => {
+        const rankSection = document.createElement('div');
+        rankSection.className = 'rank-section';
+        rankSection.innerHTML = `<h4>${rank} Place Winners</h4>`;
+
+        resultsByRank[rank].forEach(result => {
+          const winnerItem = document.createElement('div');
+          winnerItem.className = 'winner-item';
+          winnerItem.innerHTML = `
+            <div class="winner-info">
+              <div class="winner-name">${result.name}</div>
+              <div class="winner-team">${result.team}</div>
+            </div>
+          `;
+          rankSection.appendChild(winnerItem);
+        });
+
+        existingResultsDiv.appendChild(rankSection);
+      });
+    }
+
+    // Edit results button
+    document.getElementById('editResultsBtn').addEventListener('click', async () => {
+      const category = adminCategory.value;
+      const competition = adminCompetition.value;
+      const token = localStorage.getItem('authToken');
+
+      try {
+        const response = await fetch(`${API_BASE}/results/${category}/${competition}`, {
+          headers: {
+            'Authorization': `Bearer ${token}`
+          }
+        });
+
+        if (response.ok) {
+          const data = await response.json();
+          populateFormWithExistingResults(data.results);
+          document.getElementById('existingResultsSection').style.display = 'none';
+          document.getElementById('addResultsForm').style.display = 'block';
+        }
+      } catch (error) {
+        console.error('Error fetching results for edit:', error);
+        showMessage(adminResultMessage, 'Error loading results for editing.', true);
+      }
+    });
+
+    // Populate form with existing results
+    function populateFormWithExistingResults(results) {
+      // Clear existing form data
+      document.querySelectorAll('.winner-name').forEach(input => input.value = '');
+      document.querySelectorAll('.winner-team').forEach(select => select.value = '');
+
+      // Group results by rank
+      const resultsByRank = {};
+      results.forEach(result => {
+        if (!resultsByRank[result.rank]) {
+          resultsByRank[result.rank] = [];
+        }
+        resultsByRank[result.rank].push(result);
+      });
+
+      // Populate form sections
+      Object.keys(resultsByRank).forEach(rank => {
+        const section = document.querySelector(`.rank-section[data-rank="${rank}"]`);
+        if (section) {
+          const entries = section.querySelector('.winner-entries');
+          const existingEntries = entries.querySelectorAll('.winner-entry');
+
+          // Clear existing entries except first one
+          for (let i = 1; i < existingEntries.length; i++) {
+            existingEntries[i].remove();
+          }
+
+          // Populate with existing data
+          const winners = resultsByRank[rank];
+          winners.forEach((winner, index) => {
+            let entry;
+            if (index === 0) {
+              entry = existingEntries[0];
+            } else {
+              entry = existingEntries[0].cloneNode(true);
+              entry.querySelector('.remove-winner').style.display = 'inline-block';
+              entries.appendChild(entry);
+            }
+
+            entry.querySelector('.winner-name').value = winner.name;
+            entry.querySelector('.winner-team').value = winner.team;
+          });
+        }
+      });
+    }
+
+    // Delete results button
+    document.getElementById('deleteResultsBtn').addEventListener('click', async () => {
+      if (!confirm('Are you sure you want to delete all results for this competition? This action cannot be undone.')) {
+        return;
+      }
+
+      const category = adminCategory.value;
+      const competition = adminCompetition.value;
+      const token = localStorage.getItem('authToken');
+
+      try {
+        const response = await fetch(`${API_BASE}/results/${category}/${competition}`, {
+          method: 'DELETE',
+          headers: {
+            'Authorization': `Bearer ${token}`
+          }
+        });
+
+        if (response.ok) {
+          showMessage(adminResultMessage, 'Results deleted successfully.');
+          document.getElementById('existingResultsSection').style.display = 'none';
+          document.getElementById('addResultsForm').style.display = 'block';
+          document.getElementById('adminCompetition').value = '';
+        } else {
+          const errorData = await response.json();
+          throw new Error(errorData.error || 'Failed to delete results');
+        }
+      } catch (error) {
+        console.error('Error deleting results:', error);
+        showMessage(adminResultMessage, error.message || 'Error deleting results. Please try again.', true);
+      }
+    });
+
     async function saveResult() {
       const token = localStorage.getItem('authToken');
       if (!token) {
@@ -307,6 +442,15 @@
       }
 
       try {
+        // First delete existing results for this competition
+        await fetch(`${API_BASE}/results/${category}/${competition}`, {
+          method: 'DELETE',
+          headers: {
+            'Authorization': `Bearer ${token}`
+          }
+        });
+
+        // Then add the new results
         const response = await fetch(`${API_BASE}/results`, {
           method: 'POST',
           headers: {
