@@ -13,9 +13,20 @@ async function initDatabase() {
     const schemaPath = path.join(__dirname, '..', 'database-schema.sql');
     const schema = fs.readFileSync(schemaPath, 'utf8');
 
-    // Execute the entire schema as one query
+    // Split schema into individual statements and execute them
+    const statements = schema
+      .split(';')
+      .map(stmt => stmt.trim())
+      .filter(stmt => stmt.length > 0 && !stmt.startsWith('--'));
+
     console.log('Executing schema...');
-    await sql`${schema}`;
+
+    for (const statement of statements) {
+      if (statement.trim()) {
+        console.log('Executing:', statement.substring(0, 50) + '...');
+        await sql.unsafe(statement);
+      }
+    }
 
     console.log('Database initialized successfully!');
 
