@@ -71,23 +71,15 @@
         <p>Please select a category and competition to view results</p>
       </div>
 
-      <!-- Results Table (Hidden until both are selected) -->
+      <!-- Results Overview (Hidden until both are selected) -->
       <div id="resultsContainer" class="results-table-container" style="display: none;">
-        <table class="results-table">
-          <thead>
-            <tr>
-              <th>Rank</th>
-              <th>Name</th>
-              <th>Category</th>
-              <th>Competition</th>
-              <th>Points</th>
-              <th>Status</th>
-            </tr>
-          </thead>
-          <tbody id="resultsBody">
-            <!-- Dynamic content will be inserted here -->
-          </tbody>
-        </table>
+        <div class="result-header-card">
+          <h2 id="resultsHeader">Competition Results</h2>
+          <p id="resultsSubtitle" class="results-subtitle">Select a category and competition to view winners.</p>
+        </div>
+        <div id="resultsGrid" class="results-grid">
+          <!-- Dynamic result cards will appear here -->
+        </div>
       </div>
 
       <!-- Loading Spinner -->
@@ -103,6 +95,126 @@
       </div>
     </div>
   </section>
+
+  <style>
+    .result-header-card {
+      background: rgba(255,255,255,0.95);
+      border: 1px solid rgba(0,0,0,0.06);
+      border-radius: 24px;
+      box-shadow: 0 20px 55px rgba(0,0,0,0.08);
+      padding: 24px 28px;
+      margin-bottom: 24px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    .result-header-card h2 {
+      margin: 0;
+      font-size: clamp(2rem, 2.8vw, 2.6rem);
+      color: #1a3d6a;
+      letter-spacing: -0.02em;
+    }
+    .results-subtitle {
+      margin: 0;
+      color: #5b6b80;
+      font-size: 1rem;
+      max-width: 760px;
+    }
+    .results-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(220px, 1fr));
+      gap: 20px;
+    }
+    .result-card {
+      background: #ffffff;
+      border: 1px solid rgba(0,0,0,0.08);
+      border-radius: 22px;
+      padding: 22px 20px;
+      box-shadow: 0 16px 35px rgba(38, 78, 119, 0.08);
+      transition: transform 0.25s ease, box-shadow 0.25s ease;
+    }
+    .result-card:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 22px 45px rgba(38, 78, 119, 0.12);
+    }
+    .result-card .prize-label {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      padding: 10px 14px;
+      border-radius: 999px;
+      background: rgba(21, 101, 192, 0.08);
+      color: #1565c0;
+      font-weight: 700;
+      font-size: 0.95rem;
+      margin-bottom: 18px;
+    }
+    .result-card .result-field {
+      margin-bottom: 10px;
+    }
+    .result-summary-header {
+      margin-bottom: 20px;
+    }
+    .result-summary-title {
+      display: block;
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: #163d72;
+      margin-bottom: 6px;
+    }
+    .result-summary-text {
+      margin: 0;
+      color: #5f6f88;
+      font-size: 0.95rem;
+      line-height: 1.6;
+    }
+    .result-row {
+      display: flex;
+      align-items: flex-start;
+      gap: 18px;
+      padding: 18px 16px;
+      border-radius: 18px;
+      background: #f8fbff;
+      border: 1px solid rgba(21, 101, 192, 0.12);
+      margin-bottom: 16px;
+    }
+    .result-position {
+      min-width: 78px;
+      color: #165ea4;
+      font-weight: 700;
+      font-size: 1rem;
+      letter-spacing: 0.02em;
+      text-transform: uppercase;
+    }
+    .result-details {
+      display: grid;
+      gap: 12px;
+      flex: 1;
+    }
+    .result-card .field-title {
+      display: block;
+      font-size: 0.8rem;
+      letter-spacing: 0.02em;
+      color: #7a8b9d;
+      margin-bottom: 6px;
+      text-transform: uppercase;
+    }
+    .result-card .field-value {
+      font-size: 1rem;
+      font-weight: 600;
+      color: #182f4a;
+    }
+    @media (max-width: 960px) {
+      .results-grid {
+        grid-template-columns: 1fr 1fr;
+      }
+    }
+    @media (max-width: 700px) {
+      .results-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
 
   <!-- Firebase Config -->
   <script type="module">
@@ -123,7 +235,6 @@
     const categoryFilter = document.getElementById('categoryFilter');
     const competitionFilter = document.getElementById('competitionFilter');
     const resultsContainer = document.getElementById('resultsContainer');
-    const resultsBody = document.getElementById('resultsBody');
     const noSelectionMessage = document.getElementById('noSelectionMessage');
     const noResultsMessage = document.getElementById('noResultsMessage');
     const loadingSpinner = document.getElementById('loadingSpinner');
@@ -201,23 +312,50 @@
         const data = await response.json();
         const results = Array.isArray(data.results) ? data.results : [];
 
-        // Populate table with results
-        resultsBody.innerHTML = '';
+        if (results.length === 0) {
+          throw new Error('No results found');
+        }
 
-        results.forEach((result) => {
-          const row = document.createElement('tr');
-          row.innerHTML = `
-            <td><strong>#${result.rank}</strong></td>
-            <td>${result.name || 'N/A'}</td>
-            <td>${result.category || 'N/A'}</td>
-            <td>${result.competition || 'N/A'}</td>
-            <td><strong>${result.points || 0}</strong></td>
-            <td>${result.status || 'Completed'}</td>
-          `;
-          resultsBody.appendChild(row);
+        const resultsHeader = document.getElementById('resultsHeader');
+        const resultsSubtitle = document.getElementById('resultsSubtitle');
+        const resultsGrid = document.getElementById('resultsGrid');
+
+        resultsHeader.textContent = `${selectedCategory} - ${selectedCompetition}`;
+        resultsSubtitle.textContent = 'Prize winner overview for the selected competition.';
+        resultsGrid.innerHTML = '';
+
+        const sortedResults = results.slice().sort((a, b) => {
+          const order = ['1st', '2nd', '3rd'];
+          return order.indexOf(a.rank) - order.indexOf(b.rank);
         });
 
-        // Show results table
+        const card = document.createElement('div');
+        card.className = 'result-card';
+        card.innerHTML = `
+          <div class="result-summary-header">
+            <span class="result-summary-title">Winners</span>
+            <p class="result-summary-text">All prizes for this competition are shown below.</p>
+          </div>
+          ${sortedResults.map(result => `
+            <div class="result-row">
+              <span class="result-position">${result.rank}</span>
+              <div class="result-details">
+                <div class="result-field">
+                  <span class="field-title">Name</span>
+                  <span class="field-value">${result.name || 'N/A'}</span>
+                </div>
+                <div class="result-field">
+                  <span class="field-title">Team</span>
+                  <span class="field-value">${result.team || 'N/A'}</span>
+                </div>
+              </div>
+            </div>
+          `).join('')}
+        `;
+
+        resultsGrid.appendChild(card);
+
+        // Show results card
         loadingSpinner.style.display = 'none';
         noSelectionMessage.style.display = 'none';
         noResultsMessage.style.display = 'none';
