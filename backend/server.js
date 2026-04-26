@@ -23,22 +23,7 @@ const galleryRoutes = require('./routes/gallery');
 // Middleware
 app.use(helmet());
 app.use(cors({
-  origin: function (origin, callback) {
-    // Allow requests with no origin (like mobile apps or curl requests)
-    if (!origin) return callback(null, true);
-
-    // Allow localhost and file:// protocol for development
-    if (origin.startsWith('http://localhost') || origin.startsWith('file://')) {
-      return callback(null, true);
-    }
-
-    // Allow the configured frontend URL
-    if (process.env.FRONTEND_URL && origin === process.env.FRONTEND_URL) {
-      return callback(null, true);
-    }
-
-    return callback(new Error('Not allowed by CORS'));
-  },
+  origin: true, // Allow all origins for development
   credentials: true
 }));
 

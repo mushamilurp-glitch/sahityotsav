@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>API Test</title>
+</head>
+<body>
+    <h1>API Test</h1>
+    <button onclick="testAPI()">Test API</button>
+    <div id="result"></div>
+
+    <script>
+        async function testAPI() {
+            const resultDiv = document.getElementById('result');
+            try {
+                resultDiv.textContent = 'Testing...';
+                const response = await fetch('http://localhost:3000/api/health');
+                const data = await response.json();
+                resultDiv.textContent = 'Success: ' + JSON.stringify(data);
+            } catch (error) {
+                resultDiv.textContent = 'Error: ' + error.message;
+                console.error('Fetch error:', error);
+            }
+        }
+    </script>
+</body>
+</html>
