@@ -7,33 +7,57 @@
   <link rel="stylesheet" href="style.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <style>
-    .admin-page { padding: 80px 0; }
-    .admin-header { text-align: center; margin-bottom: 40px; }
-    .admin-header h1 { font-size: 2.4rem; margin-bottom: 10px; }
-    .admin-header p { color: var(--text-secondary); max-width: 720px; margin: 0 auto; }
-    .card { background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 20px; padding: 28px; box-shadow: var(--card-shadow); max-width: min(90vw, 800px); margin: 0 auto; }
+    .admin-page { padding: 60px 16px; }
+    .admin-header { text-align: center; margin-bottom: 32px; }
+    .admin-header h1 { font-size: clamp(2rem, 2.5vw, 2.4rem); margin-bottom: 10px; }
+    .admin-header p { color: var(--text-secondary); max-width: 760px; margin: 0 auto; }
+    .card { background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 20px; padding: 24px; box-shadow: var(--card-shadow); width: 100%; max-width: 1080px; margin: 0 auto; }
     .card h2 { margin-bottom: 20px; color: var(--accent-color); }
-    .form-row { display: grid; gap: 10px; margin-bottom: 18px; }
+    .form-row { display: grid; gap: 10px; margin-bottom: 16px; }
     label { font-weight: 600; color: var(--text-secondary); }
     input[type="text"], select {
       width: 100%; padding: 12px 14px; border: 1px solid var(--border-color); border-radius: 12px; background: var(--bg-primary); color: var(--text-primary);
     }
-    button { width: fit-content; background: var(--accent-color); color: #fff; border: none; border-radius: 12px; padding: 12px 24px; font-weight: 700; cursor: pointer; transition: transform 0.2s ease, background 0.2s ease; }
+    button { width: auto; background: var(--accent-color); color: #fff; border: none; border-radius: 12px; padding: 12px 20px; font-weight: 700; cursor: pointer; transition: transform 0.2s ease, background 0.2s ease; }
     button:hover { transform: translateY(-1px); background: var(--accent-dark); }
     .status-note { margin-top: 12px; color: var(--text-secondary); font-size: 0.95rem; }
     .button-group { display: flex; flex-wrap: wrap; gap: 12px; }
-    .back-link { text-align: center; margin-top: 20px; }
+    .back-link { text-align: center; margin-top: 22px; }
     .back-link a { color: var(--accent-color); text-decoration: none; }
     .back-link a:hover { text-decoration: underline; }
-    .rank-section { margin-bottom: 30px; }
-    .rank-section h3 { margin-bottom: 10px; color: var(--accent-color); font-size: 1.2rem; }
-    .winner-entry { display: flex; gap: 10px; align-items: center; margin-bottom: 10px; }
-    .winner-entry input, .winner-entry select { flex: 1; padding: 12px 14px; border: 1px solid var(--border-color); border-radius: 12px; background: var(--bg-primary); color: var(--text-primary); }
-    .winner-entry input::placeholder { color: var(--text-secondary); }
-    .remove-winner { background: #e74c3c; color: white; border: none; border-radius: 6px; padding: 6px 12px; cursor: pointer; transition: background 0.2s; }
-    .remove-winner:hover { background: #c0392b; }
-    .add-winner { background: var(--accent-color); color: white; border: none; border-radius: 8px; padding: 8px 16px; cursor: pointer; margin-top: 10px; transition: background 0.2s; }
-    .add-winner:hover { background: var(--accent-dark); }
+    .add-result-section { display: flex; justify-content: flex-end; margin-bottom: 18px; }
+    .add-result-button { display: inline-flex; align-items: center; gap: 10px; padding: 12px 22px; }
+    .add-result-form { width: 100%; margin-bottom: 24px; }
+    .results-table-section { width: 100%; overflow-x: auto; }
+    .results-table { width: 100%; border-collapse: collapse; min-width: 700px; }
+    .results-table th, .results-table td { padding: 12px 14px; text-align: left; border-bottom: 1px solid var(--border-color); }
+    .results-table th { background-color: var(--bg-secondary); color: var(--text-primary); }
+    .results-table tbody tr:hover { background-color: var(--bg-secondary); }
+    .results-table .no-results { text-align: center; color: var(--text-secondary); font-style: italic; padding: 26px; }
+    .action-buttons { display: flex; flex-wrap: wrap; gap: 8px; }
+    .action-btn { min-width: 88px; padding: 8px 12px; border-radius: 8px; font-size: 0.85rem; }
+    .edit-btn { background-color: #f39c12; color: white; }
+    .delete-btn { background-color: #e74c3c; color: white; }
+    .cancel-button { background-color: #6c757d; }
+    .prize-group { background: var(--bg-secondary); border: 1px solid var(--border-color); border-radius: 14px; padding: 16px; margin-bottom: 16px; }
+    .prize-group h4 { margin: 0 0 12px; color: var(--text-primary); font-size: 1rem; }
+
+    @media (max-width: 1120px) {
+      .card { padding: 20px; }
+      .results-table { min-width: 100%; }
+      .results-table th, .results-table td { padding: 10px 12px; font-size: 0.9rem; }
+      .add-result-section { justify-content: center; }
+      .button-group { justify-content: center; }
+    }
+
+    @media (max-width: 900px) {
+      .admin-page { padding: 40px 12px; }
+      .card { border-radius: 16px; padding: 18px; }
+      .form-row { margin-bottom: 14px; }
+      .results-table th, .results-table td { padding: 10px 10px; font-size: 0.85rem; }
+      .action-buttons { justify-content: flex-start; }
+      .edit-btn, .delete-btn { padding: 8px 10px; font-size: 0.78rem; }
+    }
   </style>
 </head>
 <body>
@@ -71,43 +95,145 @@
       </div>
 
       <div class="card">
-        <h2>Competition Result Entry</h2>
-        <div class="form-row">
-          <label for="adminCategory">Category</label>
-          <select id="adminCategory">
-            <option value="">Select category</option>
-            <option value="LP">LP</option>
-            <option value="UP">UP</option>
-            <option value="HS">HS</option>
-            <option value="HSS">HSS</option>
-            <option value="Junior">Junior</option>
-            <option value="Senior">Senior</option>
-            <option value="General">General</option>
-          </select>
-        </div>
-        <div class="form-row">
-          <label for="adminCompetition">Competition</label>
-          <select id="adminCompetition" disabled>
-            <option value="">Select competition</option>
-          </select>
+        <h2>Competition Results Management</h2>
+
+        <!-- Add Result Button -->
+        <div class="add-result-section">
+          <button id="addResultBtn" class="add-result-button">
+            <i class="fas fa-plus"></i> Add New Result
+          </button>
         </div>
 
-        <!-- Existing Results Section -->
-        <div id="existingResultsSection" style="display: none;">
-          <h3 style="color: var(--accent-color); margin-top: 20px;">Existing Results</h3>
-          <div id="existingResults" class="existing-results-list" style="margin-bottom: 20px;"></div>
+        <!-- Add Result Form (hidden by default) -->
+        <div id="addResultForm" class="add-result-form" style="display: none;">
+          <h3>Add Competition Result</h3>
+          <div class="form-row">
+            <label for="resultCategory">Category</label>
+            <select id="resultCategory" required>
+              <option value="">Select category</option>
+              <option value="LP">LP</option>
+              <option value="UP">UP</option>
+              <option value="HS">HS</option>
+              <option value="HSS">HSS</option>
+              <option value="Junior">Junior</option>
+              <option value="Senior">Senior</option>
+              <option value="General">General</option>
+            </select>
+          </div>
+          <div class="form-row">
+            <label for="resultCompetition">Competition</label>
+            <select id="resultCompetition" required disabled>
+              <option value="">Select competition</option>
+            </select>
+          </div>
+
+          <div class="prize-group">
+            <h4>1st Prize</h4>
+            <div class="form-row">
+              <label for="firstName">Participant Name</label>
+              <input type="text" id="firstName" placeholder="Enter first prize name" required>
+            </div>
+            <div class="form-row">
+              <label for="firstTeam">Team</label>
+              <select id="firstTeam" required>
+                <option value="">Select team</option>
+                <option value="Perinthattiri">Perinthattiri</option>
+                <option value="Kolapparamba">Kolapparamba</option>
+                <option value="Padinhattumutri Town">Padinhattumutri Town</option>
+                <option value="Padinhattumutri West">Padinhattumutri West</option>
+                <option value="Padinhattumutri East">Padinhattumutri East</option>
+                <option value="Kadoopuram">Kadoopuram</option>
+                <option value="Unnamthala">Unnamthala</option>
+                <option value="Pallipuram">Pallipuram</option>
+                <option value="Koottilangadi">Koottilangadi</option>
+                <option value="Cheloor">Cheloor</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="prize-group">
+            <h4>2nd Prize</h4>
+            <div class="form-row">
+              <label for="secondName">Participant Name</label>
+              <input type="text" id="secondName" placeholder="Enter second prize name" required>
+            </div>
+            <div class="form-row">
+              <label for="secondTeam">Team</label>
+              <select id="secondTeam" required>
+                <option value="">Select team</option>
+                <option value="Perinthattiri">Perinthattiri</option>
+                <option value="Kolapparamba">Kolapparamba</option>
+                <option value="Padinhattumutri Town">Padinhattumutri Town</option>
+                <option value="Padinhattumutri West">Padinhattumutri West</option>
+                <option value="Padinhattumutri East">Padinhattumutri East</option>
+                <option value="Kadoopuram">Kadoopuram</option>
+                <option value="Unnamthala">Unnamthala</option>
+                <option value="Pallipuram">Pallipuram</option>
+                <option value="Koottilangadi">Koottilangadi</option>
+                <option value="Cheloor">Cheloor</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="prize-group">
+            <h4>3rd Prize</h4>
+            <div class="form-row">
+              <label for="thirdName">Participant Name</label>
+              <input type="text" id="thirdName" placeholder="Enter third prize name" required>
+            </div>
+            <div class="form-row">
+              <label for="thirdTeam">Team</label>
+              <select id="thirdTeam" required>
+                <option value="">Select team</option>
+                <option value="Perinthattiri">Perinthattiri</option>
+                <option value="Kolapparamba">Kolapparamba</option>
+                <option value="Padinhattumutri Town">Padinhattumutri Town</option>
+                <option value="Padinhattumutri West">Padinhattumutri West</option>
+                <option value="Padinhattumutri East">Padinhattumutri East</option>
+                <option value="Kadoopuram">Kadoopuram</option>
+                <option value="Unnamthala">Unnamthala</option>
+                <option value="Pallipuram">Pallipuram</option>
+                <option value="Koottilangadi">Koottilangadi</option>
+                <option value="Cheloor">Cheloor</option>
+              </select>
+            </div>
+          </div>
+
           <div class="button-group">
-            <button id="editResultsBtn" style="background: #f39c12;">Edit Results</button>
-            <button id="deleteResultsBtn" style="background: #e74c3c;">Delete All Results</button>
+            <button id="saveResultBtn">Save Result</button>
+            <button id="cancelAddBtn" class="cancel-button">Cancel</button>
           </div>
         </div>
 
-        <!-- Add Results Form -->
-        <div id="addResultsForm">
-          <h3 style="color: var(--accent-color); margin-top: 20px;">Add New Results</h3>
-          <div id="winnersContainer"></div>
-          <div class="button-group">
-            <button id="saveResultBtn">Save Winners</button>
+        <!-- Results Table -->
+        <div class="results-table-section">
+          <h3>All Competition Results</h3>
+          <div class="table-container">
+            <table id="resultsTable" class="results-table">
+              <thead>
+                <tr>
+                  <th rowspan="2">Category</th>
+                  <th rowspan="2">Competition</th>
+                  <th colspan="2">1st Prize</th>
+                  <th colspan="2">2nd Prize</th>
+                  <th colspan="2">3rd Prize</th>
+                  <th rowspan="2">Actions</th>
+                </tr>
+                <tr>
+                  <th>Name</th>
+                  <th>Team</th>
+                  <th>Name</th>
+                  <th>Team</th>
+                  <th>Name</th>
+                  <th>Team</th>
+                </tr>
+              </thead>
+              <tbody id="resultsTableBody">
+                <tr>
+                  <td colspan="9" class="no-results">Loading results...</td>
+                </tr>
+              </tbody>
+            </table>
           </div>
         </div>
 
@@ -124,7 +250,6 @@
     // API Base URL - change this to your backend URL
     const API_BASE = 'http://localhost:3000/api';
 
-    const saveResultBtn = document.getElementById('saveResultBtn');
     const adminResultMessage = document.getElementById('adminResultMessage');
 
     const competitions = {
@@ -163,6 +288,9 @@
           window.location.href = 'login.html';
           return;
         }
+
+        // Load all results on page load
+        await loadAllResults();
       } catch (error) {
         console.error('Auth check failed:', error);
         alert('Please sign in to access the admin portal.');
@@ -176,334 +304,273 @@
       setTimeout(() => { element.textContent = ''; }, 4000);
     }
 
-    function populateCompetitions(category) {
-      const competitionSelect = document.getElementById('adminCompetition');
+    // Load all results and populate the table
+    async function loadAllResults() {
+      try {
+        const token = localStorage.getItem('authToken');
+        const response = await fetch(`${API_BASE}/results/all`, {
+          headers: {
+            'Authorization': `Bearer ${token}`
+          }
+        });
+
+        if (response.ok) {
+          const data = await response.json();
+          populateResultsTable(data.results || []);
+        } else {
+          console.error('Failed to load results');
+          populateResultsTable([]);
+        }
+      } catch (error) {
+        console.error('Error loading results:', error);
+        populateResultsTable([]);
+      }
+    }
+
+    // Populate the results table
+    function populateResultsTable(results) {
+      const tableBody = document.getElementById('resultsTableBody');
+
+      if (results.length === 0) {
+        tableBody.innerHTML = '<tr><td colspan="9" class="no-results">No results found. Click "Add New Result" to add your first result.</td></tr>';
+        return;
+      }
+
+      const groupedResults = results.reduce((acc, result) => {
+        const key = `${result.category}||${result.competition}`;
+        if (!acc[key]) {
+          acc[key] = {
+            category: result.category,
+            competition: result.competition,
+            first: { name: '', team: '' },
+            second: { name: '', team: '' },
+            third: { name: '', team: '' }
+          };
+        }
+
+        if (result.position === '1st') {
+          acc[key].first = { name: result.name, team: result.team };
+        } else if (result.position === '2nd') {
+          acc[key].second = { name: result.name, team: result.team };
+        } else if (result.position === '3rd') {
+          acc[key].third = { name: result.name, team: result.team };
+        }
+
+        return acc;
+      }, {});
+
+      tableBody.innerHTML = '';
+
+      Object.values(groupedResults).forEach(group => {
+        const row = document.createElement('tr');
+        row.innerHTML = `
+          <td>${group.category}</td>
+          <td>${group.competition}</td>
+          <td>${group.first.name || '-'}</td>
+          <td>${group.first.team || '-'}</td>
+          <td>${group.second.name || '-'}</td>
+          <td>${group.second.team || '-'}</td>
+          <td>${group.third.name || '-'}</td>
+          <td>${group.third.team || '-'}</td>
+          <td class="action-buttons">
+            <button class="action-btn edit-btn" data-category="${group.category}" data-competition="${group.competition}">
+              <i class="fas fa-edit"></i> Edit
+            </button>
+            <button class="action-btn delete-btn" data-category="${group.category}" data-competition="${group.competition}">
+              <i class="fas fa-trash"></i> Delete
+            </button>
+          </td>
+        `;
+        tableBody.appendChild(row);
+      });
+    }
+
+    // Handle Add Result button
+    document.getElementById('addResultBtn').addEventListener('click', () => {
+      const form = document.getElementById('addResultForm');
+      const isVisible = form.style.display !== 'none';
+
+      if (isVisible) {
+        form.style.display = 'none';
+        document.getElementById('addResultBtn').innerHTML = '<i class="fas fa-plus"></i> Add New Result';
+      } else {
+        setupAddForm();
+      }
+    });
+
+    function setupAddForm() {
+      const form = document.getElementById('addResultForm');
+      form.style.display = 'block';
+      document.getElementById('addResultBtn').innerHTML = '<i class="fas fa-minus"></i> Hide Form';
+      document.getElementById('resultCategory').value = '';
+      document.getElementById('resultCompetition').innerHTML = '<option value="">Select competition</option>';
+      document.getElementById('resultCompetition').disabled = true;
+      document.getElementById('firstName').value = '';
+      document.getElementById('firstTeam').value = '';
+      document.getElementById('secondName').value = '';
+      document.getElementById('secondTeam').value = '';
+      document.getElementById('thirdName').value = '';
+      document.getElementById('thirdTeam').value = '';
+    }
+
+    // Handle Cancel button
+    document.getElementById('cancelAddBtn').addEventListener('click', () => {
+      document.getElementById('addResultForm').style.display = 'none';
+      document.getElementById('addResultBtn').innerHTML = '<i class="fas fa-plus"></i> Add New Result';
+    });
+
+    // Handle category change for competitions
+    document.getElementById('resultCategory').addEventListener('change', (e) => {
+      const category = e.target.value;
+      const competitionSelect = document.getElementById('resultCompetition');
       competitionSelect.innerHTML = '<option value="">Select competition</option>';
       competitionSelect.disabled = true;
 
-      if (!category || !competitions[category]) {
+      if (category && competitions[category]) {
+        competitions[category].forEach(comp => {
+          const option = document.createElement('option');
+          option.value = comp;
+          option.textContent = comp;
+          competitionSelect.appendChild(option);
+        });
+        competitionSelect.disabled = false;
+      }
+    });
+
+    // Handle Save Result
+    document.getElementById('saveResultBtn').addEventListener('click', async () => {
+      const category = document.getElementById('resultCategory').value;
+      const competition = document.getElementById('resultCompetition').value;
+      const firstName = document.getElementById('firstName').value.trim();
+      const firstTeam = document.getElementById('firstTeam').value;
+      const secondName = document.getElementById('secondName').value.trim();
+      const secondTeam = document.getElementById('secondTeam').value;
+      const thirdName = document.getElementById('thirdName').value.trim();
+      const thirdTeam = document.getElementById('thirdTeam').value;
+
+      if (!category || !competition || !firstName || !firstTeam || !secondName || !secondTeam || !thirdName || !thirdTeam) {
+        showMessage(adminResultMessage, 'Please fill in all prize fields.', true);
         return;
       }
 
-      competitions[category].forEach((comp) => {
-        const option = document.createElement('option');
-        option.value = comp;
-        option.textContent = comp;
-        competitionSelect.appendChild(option);
-      });
-      competitionSelect.disabled = false;
-    }
-
-    // Check auth on page load
-    checkAuth();
-
-    document.getElementById('adminCategory').addEventListener('change', (e) => {
-      populateCompetitions(e.target.value);
-    });
-
-    // Check for existing results when competition is selected
-    adminCompetition.addEventListener('change', async () => {
-      const category = adminCategory.value;
-      const competition = adminCompetition.value;
-
-      if (category && competition) {
-        await checkExistingResults(category, competition);
-      } else {
-        document.getElementById('existingResultsSection').style.display = 'none';
-        document.getElementById('addResultsForm').style.display = 'block';
-      }
-    });
-
-    // Check for existing results
-    async function checkExistingResults(category, competition) {
-      try {
-        const token = localStorage.getItem('authToken');
-        if (!token) {
-          showMessage(adminResultMessage, 'Please login first.', true);
-          return;
-        }
-
-        const response = await fetch(`${API_BASE}/results/${category}/${competition}`, {
-          headers: {
-            'Authorization': `Bearer ${token}`
-          }
-        });
-
-        if (response.ok) {
-          const data = await response.json();
-          if (data.results && data.results.length > 0) {
-            displayExistingResults(data.results);
-            document.getElementById('existingResultsSection').style.display = 'block';
-            document.getElementById('addResultsForm').style.display = 'none';
-          } else {
-            document.getElementById('existingResultsSection').style.display = 'none';
-            document.getElementById('addResultsForm').style.display = 'block';
-          }
-        } else {
-          document.getElementById('existingResultsSection').style.display = 'none';
-          document.getElementById('addResultsForm').style.display = 'block';
-        }
-      } catch (error) {
-        console.error('Error checking existing results:', error);
-        document.getElementById('existingResultsSection').style.display = 'none';
-        document.getElementById('addResultsForm').style.display = 'block';
-      }
-    }
-
-    // Display existing results
-    function displayExistingResults(results) {
-      const existingResultsDiv = document.getElementById('existingResults');
-      existingResultsDiv.innerHTML = '';
-
-      // Group results by rank
-      const resultsByRank = {};
-      results.forEach(result => {
-        if (!resultsByRank[result.rank]) {
-          resultsByRank[result.rank] = [];
-        }
-        resultsByRank[result.rank].push(result);
-      });
-
-      // Display results for each rank
-      Object.keys(resultsByRank).sort().forEach(rank => {
-        const rankSection = document.createElement('div');
-        rankSection.className = 'rank-section';
-        rankSection.innerHTML = `<h4>${rank} Place Winners</h4>`;
-
-        resultsByRank[rank].forEach(result => {
-          const winnerItem = document.createElement('div');
-          winnerItem.className = 'winner-item';
-          winnerItem.innerHTML = `
-            <div class="winner-info">
-              <div class="winner-name">${result.name}</div>
-              <div class="winner-team">${result.team}</div>
-            </div>
-          `;
-          rankSection.appendChild(winnerItem);
-        });
-
-        existingResultsDiv.appendChild(rankSection);
-      });
-    }
-
-    // Edit results button
-    document.getElementById('editResultsBtn').addEventListener('click', async () => {
-      const category = adminCategory.value;
-      const competition = adminCompetition.value;
       const token = localStorage.getItem('authToken');
 
       try {
-        const response = await fetch(`${API_BASE}/results/${category}/${competition}`, {
-          headers: {
-            'Authorization': `Bearer ${token}`
-          }
-        });
-
-        if (response.ok) {
-          const data = await response.json();
-          populateFormWithExistingResults(data.results);
-          document.getElementById('existingResultsSection').style.display = 'none';
-          document.getElementById('addResultsForm').style.display = 'block';
-        }
-      } catch (error) {
-        console.error('Error fetching results for edit:', error);
-        showMessage(adminResultMessage, 'Error loading results for editing.', true);
-      }
-    });
-
-    // Populate form with existing results
-    function populateFormWithExistingResults(results) {
-      // Clear existing form data
-      document.querySelectorAll('.winner-name').forEach(input => input.value = '');
-      document.querySelectorAll('.winner-team').forEach(select => select.value = '');
-
-      // Group results by rank
-      const resultsByRank = {};
-      results.forEach(result => {
-        if (!resultsByRank[result.rank]) {
-          resultsByRank[result.rank] = [];
-        }
-        resultsByRank[result.rank].push(result);
-      });
-
-      // Populate form sections
-      Object.keys(resultsByRank).forEach(rank => {
-        const section = document.querySelector(`.rank-section[data-rank="${rank}"]`);
-        if (section) {
-          const entries = section.querySelector('.winner-entries');
-          const existingEntries = entries.querySelectorAll('.winner-entry');
-
-          // Clear existing entries except first one
-          for (let i = 1; i < existingEntries.length; i++) {
-            existingEntries[i].remove();
-          }
-
-          // Populate with existing data
-          const winners = resultsByRank[rank];
-          winners.forEach((winner, index) => {
-            let entry;
-            if (index === 0) {
-              entry = existingEntries[0];
-            } else {
-              entry = existingEntries[0].cloneNode(true);
-              entry.querySelector('.remove-winner').style.display = 'inline-block';
-              entries.appendChild(entry);
-            }
-
-            entry.querySelector('.winner-name').value = winner.name;
-            entry.querySelector('.winner-team').value = winner.team;
-          });
-        }
-      });
-    }
-
-    // Delete results button
-    document.getElementById('deleteResultsBtn').addEventListener('click', async () => {
-      if (!confirm('Are you sure you want to delete all results for this competition? This action cannot be undone.')) {
-        return;
-      }
-
-      const category = adminCategory.value;
-      const competition = adminCompetition.value;
-      const token = localStorage.getItem('authToken');
-
-      try {
-        const response = await fetch(`${API_BASE}/results/${category}/${competition}`, {
+        // Remove existing results for this competition before saving the full group
+        const deleteResponse = await fetch(`${API_BASE}/results/${encodeURIComponent(category)}/${encodeURIComponent(competition)}`, {
           method: 'DELETE',
-          headers: {
-            'Authorization': `Bearer ${token}`
-          }
+          headers: { 'Authorization': `Bearer ${token}` }
         });
-
-        if (response.ok) {
-          showMessage(adminResultMessage, 'Results deleted successfully.');
-          document.getElementById('existingResultsSection').style.display = 'none';
-          document.getElementById('addResultsForm').style.display = 'block';
-          document.getElementById('adminCompetition').value = '';
-        } else {
-          const errorData = await response.json();
-          throw new Error(errorData.error || 'Failed to delete results');
+        if (!deleteResponse.ok && deleteResponse.status !== 404) {
+          const errorData = await deleteResponse.json();
+          throw new Error(errorData.error || 'Failed to clear existing competition results');
         }
-      } catch (error) {
-        console.error('Error deleting results:', error);
-        showMessage(adminResultMessage, error.message || 'Error deleting results. Please try again.', true);
-      }
-    });
 
-    async function saveResult() {
-      const token = localStorage.getItem('authToken');
-      if (!token) {
-        alert('Please sign in again.');
-        window.location.href = 'login.html';
-        return;
-      }
-
-      const category = document.getElementById('adminCategory').value;
-      const competition = document.getElementById('adminCompetition').value;
-
-      if (!category || !competition) {
-        showMessage(adminResultMessage, 'Please select category and competition.', true);
-        return;
-      }
-
-      // Collect all winners from the dynamic form
-      const winners = [];
-      const rankSections = document.querySelectorAll('.rank-section');
-
-      for (const section of rankSections) {
-        const rank = section.dataset.rank;
-        const points = parseInt(section.dataset.points);
-        const winnerEntries = section.querySelectorAll('.winner-entry');
-
-        winnerEntries.forEach((entry) => {
-          const nameInput = entry.querySelector('.winner-name');
-          const teamSelect = entry.querySelector('.winner-team');
-
-          const name = nameInput.value.trim();
-          const team = teamSelect.value.trim();
-
-          if (name && team) {
-            winners.push({
-              category,
-              competition,
-              position: rank,
-              name,
-              team,
-              points,
-              status: 'Completed'
-            });
-          }
-        });
-      }
-
-      if (winners.length === 0) {
-        showMessage(adminResultMessage, 'Please enter at least one winner.', true);
-        return;
-      }
-
-      try {
-        // First delete existing results for this competition
-        await fetch(`${API_BASE}/results/${category}/${competition}`, {
-          method: 'DELETE',
-          headers: {
-            'Authorization': `Bearer ${token}`
-          }
-        });
-
-        // Then add the new results
         const response = await fetch(`${API_BASE}/results`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
             'Authorization': `Bearer ${token}`
           },
-          body: JSON.stringify({ results: winners })
+          body: JSON.stringify({
+            results: [
+              { category, competition, position: '1st', name: firstName, team: firstTeam, points: 3, status: 'Completed' },
+              { category, competition, position: '2nd', name: secondName, team: secondTeam, points: 2, status: 'Completed' },
+              { category, competition, position: '3rd', name: thirdName, team: thirdTeam, points: 1, status: 'Completed' }
+            ]
+          })
         });
 
         if (!response.ok) {
           const errorData = await response.json();
-          throw new Error(errorData.error || 'Failed to save results');
+          throw new Error(errorData.error || 'Failed to save result group');
         }
 
-        // Clear form
-        document.getElementById('adminCompetition').value = '';
-        document.getElementById('adminCategory').value = '';
-        document.getElementById('adminCompetition').disabled = true;
-
-        // Clear all winner inputs
-        document.querySelectorAll('.winner-name').forEach(input => input.value = '');
-        document.querySelectorAll('.winner-team').forEach(select => select.value = '');
-
-        showMessage(adminResultMessage, 'Winners saved successfully.');
-
+        showMessage(adminResultMessage, 'Competition results saved successfully.');
+        document.getElementById('addResultForm').style.display = 'none';
+        document.getElementById('addResultBtn').innerHTML = '<i class="fas fa-plus"></i> Add New Result';
+        await loadAllResults();
       } catch (error) {
-        console.error('Error saving results:', error);
-        showMessage(adminResultMessage, error.message || 'Error saving results. Please try again.', true);
+        console.error('Error saving result:', error);
+        showMessage(adminResultMessage, error.message || 'Error saving competition results. Please try again.', true);
       }
-    }
+    });
 
-    saveResultBtn.addEventListener('click', saveResult);
+    // Handle table actions (edit/delete)
+    document.addEventListener('click', async (e) => {
+      const button = e.target.closest('.edit-btn, .delete-btn');
+      if (!button) return;
 
-    document.addEventListener('click', (e) => {
-      if (e.target.classList.contains('add-winner')) {
-        const section = e.target.closest('.rank-section');
-        const entries = section.querySelector('.winner-entries');
-        const newEntry = entries.querySelector('.winner-entry').cloneNode(true);
+      const category = button.dataset.category;
+      const competition = button.dataset.competition;
+      const token = localStorage.getItem('authToken');
 
-        newEntry.querySelector('.winner-name').value = '';
-        newEntry.querySelector('.winner-team').value = '';
-        newEntry.querySelector('.remove-winner').style.display = 'inline-block';
+      if (button.classList.contains('edit-btn')) {
+        try {
+          const response = await fetch(`${API_BASE}/results/${encodeURIComponent(category)}/${encodeURIComponent(competition)}`, {
+            headers: { 'Authorization': `Bearer ${token}` }
+          });
 
-        entries.appendChild(newEntry);
-      } else if (e.target.classList.contains('remove-winner')) {
-        const entry = e.target.closest('.winner-entry');
-        const entries = entry.parentElement;
+          if (!response.ok) {
+            throw new Error('Unable to load competition results for editing.');
+          }
 
-        if (entries.children.length > 1) {
-          entry.remove();
+          const data = await response.json();
+          const results = data.results || [];
+          const grouped = {
+            first: results.find(r => r.position === '1st') || { name: '', team: '' },
+            second: results.find(r => r.position === '2nd') || { name: '', team: '' },
+            third: results.find(r => r.position === '3rd') || { name: '', team: '' }
+          };
+
+          document.getElementById('resultCategory').value = category;
+          document.getElementById('resultCategory').dispatchEvent(new Event('change'));
+          setTimeout(() => {
+            document.getElementById('resultCompetition').value = competition;
+          }, 100);
+          document.getElementById('firstName').value = grouped.first.name;
+          document.getElementById('firstTeam').value = grouped.first.team;
+          document.getElementById('secondName').value = grouped.second.name;
+          document.getElementById('secondTeam').value = grouped.second.team;
+          document.getElementById('thirdName').value = grouped.third.name;
+          document.getElementById('thirdTeam').value = grouped.third.team;
+
+          document.getElementById('addResultForm').style.display = 'block';
+          document.getElementById('addResultBtn').innerHTML = '<i class="fas fa-minus"></i> Hide Form';
+          document.getElementById('addResultForm').scrollIntoView({ behavior: 'smooth' });
+        } catch (error) {
+          console.error('Edit load failed:', error);
+          showMessage(adminResultMessage, error.message || 'Failed to load competition results for editing.', true);
+        }
+      }
+
+      if (button.classList.contains('delete-btn')) {
+        if (!confirm('Are you sure you want to delete all results for this competition?')) {
+          return;
+        }
+
+        try {
+          const response = await fetch(`${API_BASE}/results/${encodeURIComponent(category)}/${encodeURIComponent(competition)}`, {
+            method: 'DELETE',
+            headers: { 'Authorization': `Bearer ${token}` }
+          });
+
+          if (!response.ok) {
+            const errorData = await response.json();
+            throw new Error(errorData.error || 'Failed to delete competition results');
+          }
+
+          showMessage(adminResultMessage, 'Competition results deleted successfully.');
+          await loadAllResults();
+        } catch (error) {
+          console.error('Error deleting competition results:', error);
+          showMessage(adminResultMessage, error.message || 'Error deleting competition results. Please try again.', true);
         }
       }
     });
+
+    // Check auth on page load
+    checkAuth();
   </script>
 
   <script src="script.js"></script>

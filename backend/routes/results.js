@@ -69,6 +69,24 @@ router.get('/competitions/:category', async (req, res) => {
   }
 });
 
+// Get all results (admin only)
+router.get('/all', authenticateToken, requireAdmin, async (req, res) => {
+  try {
+    const query = sql`
+      SELECT id, category, competition, position, name, team, points, status
+      FROM results
+      ORDER BY created_at DESC
+    `;
+
+    const result = await query;
+    res.json({ results: result });
+
+  } catch (error) {
+    console.error('Error fetching all results:', error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
 // Get results for a specific category and competition
 router.get('/:category/:competition', async (req, res) => {
   try {
@@ -118,6 +136,24 @@ router.post('/', authenticateToken, requireAdmin, async (req, res) => {
 
   } catch (error) {
     console.error('Error adding results:', error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
+// Delete a specific result by ID (admin only)
+router.delete('/result/:id', authenticateToken, requireAdmin, async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    await sql`
+      DELETE FROM results
+      WHERE id = ${id}
+    `;
+
+    res.json({ message: 'Result deleted successfully' });
+
+  } catch (error) {
+    console.error('Error deleting result:', error);
     res.status(500).json({ error: 'Internal server error' });
   }
 });
