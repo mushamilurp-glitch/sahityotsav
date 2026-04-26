@@ -198,11 +198,11 @@
           throw new Error('Failed to fetch results');
         }
 
-        const results = await response.json();
+        const data = await response.json();
+        const results = Array.isArray(data.results) ? data.results : [];
 
         // Populate table with results
         resultsBody.innerHTML = '';
-        let rank = 1;
 
         results.forEach((result) => {
           const row = document.createElement('tr');
@@ -215,7 +215,6 @@
             <td>${result.status || 'Completed'}</td>
           `;
           resultsBody.appendChild(row);
-          rank++;
         });
 
         // Show results table
