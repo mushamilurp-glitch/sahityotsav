@@ -9,23 +9,41 @@ const router = express.Router();
 router.post('/login', async (req, res) => {
   try {
     const { email, password } = req.body;
+    console.log('Login attempt:', { email, password: password ? '***' : 'empty' });
 
     if (!email || !password) {
       return res.status(400).json({ error: 'Email and password are required' });
     }
 
     // Find user by email
+    console.log('About to execute query...');
+    // First test basic connection
+    const testQuery = await sql`SELECT 1 as test`;
+    console.log('Test query result:', testQuery);
+    
+    // Check if users table exists
+    const tableCheck = await sql`SELECT table_name FROM information_schema.tables WHERE table_name = 'users'`;
+    console.log('Users table check:', tableCheck);
+    
+    // Try SELECT * FROM users without WHERE
+    const allUsers = await sql`SELECT * FROM users`;
+    console.log('All users:', allUsers);
+    
     const userQuery = sql`SELECT * FROM users WHERE email = ${email}`;
+    console.log('SQL query created');
     const userResult = await userQuery;
+    console.log('Query executed, result:', userResult);
 
     if (userResult.length === 0) {
       return res.status(401).json({ error: 'Invalid credentials' });
     }
 
     const user = userResult[0];
+    console.log('User found:', { id: user.id, email: user.email, role: user.role });
 
     // Check password
     const isValidPassword = await bcrypt.compare(password, user.password_hash);
+    console.log('Password valid:', isValidPassword);
     if (!isValidPassword) {
       return res.status(401).json({ error: 'Invalid credentials' });
     }

@@ -3,13 +3,18 @@ const cors = require('cors');
 const helmet = require('helmet');
 const rateLimit = require('express-rate-limit');
 const { neon } = require('@neondatabase/serverless');
+const path = require('path');
 require('dotenv').config();
+console.log('CWD:', process.cwd());
+console.log('__dirname:', __dirname);
+console.log('DATABASE_URL from env:', process.env.DATABASE_URL);
 
 const app = express();
 const PORT = process.env.PORT || 3000;
 
 // Database connection
 const sql = neon(process.env.DATABASE_URL);
+console.log('DATABASE_URL:', process.env.DATABASE_URL ? 'set' : 'not set');
 
 // Export sql for use in routes
 module.exports = { sql };
@@ -37,6 +42,9 @@ app.use('/api/', limiter);
 // Body parsing
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true, limit: '10mb' }));
+
+// Serve static files from the parent directory (frontend)
+app.use(express.static(path.join(__dirname, '..')));
 
 // Routes
 app.use('/api/auth', authRoutes);

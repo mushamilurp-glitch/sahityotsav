@@ -4,10 +4,11 @@ const path = require('path');
 require('dotenv').config();
 
 async function initDatabase() {
-  const sql = neon(process.env.DATABASE_URL);
+  const sql = neon('postgresql://neondb_owner:npg_m0xvoAwC5gXU@ep-noisy-mouse-anihh6up.c-6.us-east-1.aws.neon.tech/neondb?sslmode=require');
 
   try {
     console.log('Connecting to database...');
+    console.log('DATABASE_URL:', 'postgresql://neondb_owner:npg_m0xvoAwC5gXU@ep-noisy-mouse-anihh6up.c-6.us-east-1.aws.neon.tech/neondb?sslmode=require');
 
     // Read schema file
     const schemaPath = path.join(__dirname, '..', 'database-schema.sql');
@@ -29,6 +30,10 @@ async function initDatabase() {
     }
 
     console.log('Database initialized successfully!');
+
+    // Verify the user was inserted
+    const users = await sql`SELECT * FROM users`;
+    console.log('Users after init:', users);
 
   } catch (error) {
     console.error('Error initializing database:', error);

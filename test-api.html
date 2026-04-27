@@ -15,7 +15,7 @@
             const resultDiv = document.getElementById('result');
             try {
                 resultDiv.textContent = 'Testing...';
-                const response = await fetch('http://localhost:3000/api/health');
+                const response = await fetch('/api/health');
                 const data = await response.json();
                 resultDiv.textContent = 'Success: ' + JSON.stringify(data);
             } catch (error) {
