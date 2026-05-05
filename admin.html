@@ -38,6 +38,7 @@
       <li><a href="events.html">Events</a></li>
       <li><a href="gallery.html">Gallery</a></li>
       <li><a href="donate.html">Donate</a></li>
+      <li><a href="#" id="logoutBtn" style="color: #e74c3c; font-weight: 600;">Logout</a></li>
     </ul>
 
     <button class="theme-toggle" id="themeToggle" aria-label="Toggle dark mode">
@@ -68,45 +69,34 @@
     </div>
   </section>
 
-  <script type="module">
-    // API Base URL - change this to your backend URL
-    const API_BASE = '/api';
-
+  <script>
     // Check authentication on page load
-    async function checkAuth() {
-      const token = localStorage.getItem('authToken');
-      if (!token) {
+    function checkAuth() {
+      const isLoggedIn = localStorage.getItem('adminLoggedIn') === 'true';
+      
+      if (!isLoggedIn) {
         alert('Please sign in to access the admin portal.');
         window.location.href = 'login.html';
         return;
-      }
-
-      try {
-        const response = await fetch(`${API_BASE}/auth/verify`, {
-          headers: {
-            'Authorization': `Bearer ${token}`
-          }
-        });
-
-        if (!response.ok) {
-          throw new Error('Invalid token');
-        }
-
-        const data = await response.json();
-        if (data.user.role !== 'admin') {
-          alert('Admin access required.');
-          window.location.href = 'login.html';
-          return;
-        }
-      } catch (error) {
-        console.error('Auth check failed:', error);
-        alert('Please sign in to access the admin portal.');
-        window.location.href = 'login.html';
       }
     }
 
     // Check auth on page load
     checkAuth();
+
+    // Logout functionality
+    const logoutBtn = document.getElementById('logoutBtn');
+    if (logoutBtn) {
+      logoutBtn.addEventListener('click', (e) => {
+        e.preventDefault();
+        const confirmed = confirm('Are you sure you want to logout?');
+        if (confirmed) {
+          localStorage.removeItem('adminLoggedIn');
+          localStorage.removeItem('adminLoginTime');
+          window.location.href = 'login.html';
+        }
+      });
+    }
   </script>
 
   <script src="script.js"></script>
