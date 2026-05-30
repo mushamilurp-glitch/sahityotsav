@@ -1,6 +1,6 @@
 # Sahithyotsav Backend API
 
-Backend API for the Sahithyotsav results system using Node.js, Express, and Neon PostgreSQL.
+This backend is a simplified static server and mock API for the Sahithyotsav website. It serves frontend files from the project root and provides lightweight endpoints for results, leaderboard, gallery, and authentication.
 
 ## Setup
 
@@ -9,18 +9,7 @@ Backend API for the Sahithyotsav results system using Node.js, Express, and Neon
    npm install
    ```
 
-2. **Environment variables:**
-   - Copy `.env.example` to `.env`
-   - Fill in your Neon PostgreSQL connection string
-   - Set a secure JWT secret
-   - Configure other settings as needed
-
-3. **Initialize database:**
-   ```bash
-   npm run init-db
-   ```
-
-4. **Start the server:**
+2. **Start the server:**
    ```bash
    npm start
    ```
@@ -30,31 +19,46 @@ Backend API for the Sahithyotsav results system using Node.js, Express, and Neon
    npm run dev
    ```
 
+3. **Open the site:**
+   - Default port: `http://localhost:3000`
+   - If port `3000` is busy, use a different port:
+     ```powershell
+     $env:PORT=3100; npm start
+     ```
+
 ## API Endpoints
 
 ### Authentication
-- `POST /api/auth/login` - Login with email/password
+- `POST /api/auth/login` - Login with admin email/password
 - `GET /api/auth/verify` - Verify JWT token
-- `POST /api/auth/change-password` - Change admin password
 
 ### Results
 - `GET /api/results/categories` - Get all categories
 - `GET /api/results/competitions/:category` - Get competitions for a category
-- `GET /api/results/:category/:competition` - Get results for category/competition
-- `POST /api/results` - Add new results (admin only)
+- `GET /api/results/:category/:competition` - Get results for a competition
+- `GET /api/results/all` - Get all results (admin only)
+- `POST /api/results` - Save competition results (admin only)
+- `DELETE /api/results/:category/:competition` - Delete competition results (admin only)
 
 ### Leaderboard
-- `GET /api/leaderboard` - Get team leaderboard
-- `PUT /api/leaderboard` - Update leaderboard (admin only)
-- `GET /api/leaderboard/team/:teamName` - Get specific team points
+- `GET /api/leaderboard` - Get the leaderboard and declared result count
+- `PUT /api/leaderboard` - Update leaderboard data (admin only)
 
 ### Gallery
 - `GET /api/gallery` - Get gallery images
-- `GET /api/gallery/categories` - Get gallery categories
-- `POST /api/gallery` - Upload image (admin only)
-- `DELETE /api/gallery/:id` - Delete image (admin only)
 
-## Database Schema
+## Admin Credentials
+
+- Email: `admin@sahityotsav.com`
+- Password: `admin123`
+
+> These credentials are for the local demo backend only.
+
+## Notes
+
+- No database is required for this simplified backend.
+- Data is stored in memory and resets when the server restarts.
+- Frontend files are served from the parent directory of `backend/`.
 
 The database includes the following tables:
 - `users` - User accounts for authentication
