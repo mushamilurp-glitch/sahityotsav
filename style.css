@@ -105,7 +105,19 @@ input::placeholder,textarea::placeholder{color:rgba(230,240,242,0.45)}
 .photo .meta{padding:10px}
 
 /* Responsive */
-@media (max-width:900px){.nav-links{display:none}.hamburger{display:inline-block;background:transparent;border:0;color:var(--muted)} .container{padding:0 14px}}
+@media (max-width:900px){
+  .nav-links{display:none}
+  .hamburger{display:inline-block;background:transparent;border:0;color:var(--muted)}
+  .container{padding:0 14px}
+  .donate-grid{grid-template-columns:1fr}
+  .donate-card{min-height:auto;padding:22px}
+  .donate-intro{padding:24px}
+  .donate-section{padding:36px 0}
+  .donate-section h2{font-size:1.8rem}
+  .donate-section .lead{max-width:100%}
+  .qr-image{max-width:100%;height:auto}
+  .hero-content h1{font-size:2.3rem}
+}
 
 /* Mobile dropdown styles */
 @media (max-width:900px){
@@ -113,12 +125,6 @@ input::placeholder,textarea::placeholder{color:rgba(230,240,242,0.45)}
     .nav-links.open{display:flex}
     .nav-links li{white-space:nowrap}
     .navbar .logo1{height:40px}
-}
-
-@media (max-width:900px){
-  .donate-grid{grid-template-columns:1fr}
-  .donate-card{min-height:auto}
-  .hero-content h1{font-size:2.3rem}
 }
 
 /* small-screen close affordance */
