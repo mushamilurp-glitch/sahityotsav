@@ -73,9 +73,13 @@
     // Check authentication on page load
     function checkAuth() {
       const isLoggedIn = localStorage.getItem('adminLoggedIn') === 'true';
+      const token = localStorage.getItem('authToken');
       
-      if (!isLoggedIn) {
+      if (!isLoggedIn || !token) {
         alert('Please sign in to access the admin portal.');
+        localStorage.removeItem('adminLoggedIn');
+        localStorage.removeItem('adminLoginTime');
+        localStorage.removeItem('authToken');
         window.location.href = 'login.html';
         return;
       }
@@ -93,6 +97,7 @@
         if (confirmed) {
           localStorage.removeItem('adminLoggedIn');
           localStorage.removeItem('adminLoginTime');
+          localStorage.removeItem('authToken');
           window.location.href = 'login.html';
         }
       });

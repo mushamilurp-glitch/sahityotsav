@@ -131,7 +131,7 @@
 
   <script type="module">
     // API Base URL - change this to your backend URL
-    const API_BASE = 'http://localhost:3000/api';
+    const API_BASE = window.location.protocol === 'file:' ? 'http://localhost:3000/api' : `${window.location.origin}/api`;
 
     const saveLeaderboardBtn = document.getElementById('saveLeaderboardBtn');
     const adminStatusMessage = document.getElementById('adminStatusMessage');
@@ -152,9 +152,13 @@
     // Check authentication on page load
     function checkAuth() {
       const isLoggedIn = localStorage.getItem('adminLoggedIn') === 'true';
-      
-      if (!isLoggedIn) {
+      const token = localStorage.getItem('authToken');
+
+      if (!isLoggedIn || !token) {
         alert('Please sign in to access the admin portal.');
+        localStorage.removeItem('adminLoggedIn');
+        localStorage.removeItem('adminLoginTime');
+        localStorage.removeItem('authToken');
         window.location.href = 'login.html';
         return;
       }
@@ -178,6 +182,7 @@
         if (confirmed) {
           localStorage.removeItem('adminLoggedIn');
           localStorage.removeItem('adminLoginTime');
+          localStorage.removeItem('authToken');
           window.location.href = 'login.html';
         }
       });

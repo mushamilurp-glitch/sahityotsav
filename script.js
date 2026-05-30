@@ -2,55 +2,53 @@
 const hamburger = document.getElementById('hamburger');
 const navLinks = document.getElementById('navLinks');
 
-hamburger.addEventListener('click', () => {
-  hamburger.classList.toggle('active');
-  navLinks.classList.toggle('active');
-});
-
-// Close menu when a link is clicked
-document.querySelectorAll('.nav-links a').forEach(link => {
-  link.addEventListener('click', () => {
-    hamburger.classList.remove('active');
-    navLinks.classList.remove('active');
+if (hamburger && navLinks) {
+  hamburger.addEventListener('click', () => {
+    hamburger.classList.toggle('active');
+    navLinks.classList.toggle('open');
+    const expanded = hamburger.classList.contains('active');
+    hamburger.setAttribute('aria-expanded', expanded);
   });
-});
+
+  // Close menu when a link is clicked
+  document.querySelectorAll('.nav-links a').forEach(link => {
+    link.addEventListener('click', () => {
+      hamburger.classList.remove('active');
+      navLinks.classList.remove('open');
+      hamburger.setAttribute('aria-expanded', 'false');
+    });
+  });
+}
 
 // THEME TOGGLE FUNCTIONALITY
 const themeToggle = document.getElementById('themeToggle');
 const htmlElement = document.documentElement;
 
-// Check for saved theme preference or default to light mode
+const updateThemeToggle = (isDarkMode) => {
+  if (!themeToggle) return;
+  themeToggle.innerHTML = '<span class="dot"></span>';
+  themeToggle.setAttribute('aria-label', isDarkMode ? 'Switch to light mode' : 'Switch to dark mode');
+};
+
+const setTheme = (theme) => {
+  htmlElement.setAttribute('data-theme', theme);
+  localStorage.setItem('theme', theme);
+  updateThemeToggle(theme === 'dark');
+};
+
 const initializeTheme = () => {
-  const savedTheme = localStorage.getItem('theme') || 'light';
-  
-  if (savedTheme === 'dark') {
-    htmlElement.classList.add('dark-mode');
-    updateThemeIcon(true);
-  } else {
-    htmlElement.classList.remove('dark-mode');
-    updateThemeIcon(false);
-  }
+  const savedTheme = localStorage.getItem('theme');
+  const defaultTheme = window.matchMedia && window.matchMedia('(prefers-color-scheme:dark)').matches ? 'dark' : 'light';
+  setTheme(savedTheme || defaultTheme);
 };
 
-// Update the theme toggle icon
-const updateThemeIcon = (isDarkMode) => {
-  if (isDarkMode) {
-    themeToggle.innerHTML = '<i class="fas fa-sun"></i>';
-    themeToggle.setAttribute('aria-label', 'Switch to light mode');
-  } else {
-    themeToggle.innerHTML = '<i class="fas fa-moon"></i>';
-    themeToggle.setAttribute('aria-label', 'Switch to dark mode');
-  }
-};
+if (themeToggle) {
+  themeToggle.addEventListener('click', () => {
+    const current = htmlElement.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+    setTheme(current);
+  });
+}
 
-// Toggle theme on button click
-themeToggle.addEventListener('click', () => {
-  const isDarkMode = htmlElement.classList.toggle('dark-mode');
-  localStorage.setItem('theme', isDarkMode ? 'dark' : 'light');
-  updateThemeIcon(isDarkMode);
-});
-
-// Initialize theme on page load
 initializeTheme();
 
 // Smooth scroll behavior for navigation links

@@ -1,91 +1,57 @@
-<!DOCTYPE html>
-<html lang="en">
+﻿<!doctype html>
+<html>
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Koottilangadi Sector Sahithyotsav</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>SSF Koottilangadi Sahityotsav</title>
   <link rel="stylesheet" href="style.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 <body>
-
-  <!-- NAVBAR -->
   <nav class="navbar">
     <div class="navbar-left">
       <img src="images/logo.png" class="logo1" alt="Logo">
-      <img src="images/sah-ml.png" class="logo2" alt="Sahithyotsav">
+      <img src="images/sah-en.png" class="logo2" alt="Sahithyotsav">
     </div>
-
-    <button class="hamburger" id="hamburger" aria-label="Toggle menu">
-      <span></span>
-      <span></span>
-      <span></span>
-    </button>
-
     <ul class="nav-links" id="navLinks">
       <li><a href="index.html">Home</a></li>
       <li><a href="results.html">Results</a></li>
       <li><a href="leaderboard.html">Leaderboard</a></li>
-      <li><a href="events.html">Events</a></li>
       <li><a href="gallery.html">Gallery</a></li>
+      <li><a href="events.html">Events</a></li>
       <li><a href="donate.html">Donate</a></li>
+      <li><a href="login.html">Admin</a></li>
     </ul>
-
-    <button class="theme-toggle" id="themeToggle" aria-label="Toggle dark mode">
-      <i class="fas fa-moon"></i>
-    </button>
+    <button id="themeToggle" class="theme-toggle" title="Toggle theme"><span class="dot"></span></button>
+    <button id="hamburger" class="hamburger" aria-label="Menu" aria-expanded="false">☰</button>
   </nav>
 
-  <!-- HERO SECTION -->
   <section class="hero">
-    <div class="hero-overlay">
-      <div class="hero-content">
-        <h1><span class="ssf">SSF</span> Koottilangadi Sector</h1>
-        <img src="images/sah-en.png" class="hero-text">
-        <p class="hero-subtitle">Cultural Festival & Competitions</p>
+    <div class="container hero-inner">
+      <div class="hero-card">
+        <h1>SSF Koottilangadi Sector Sahityotsav</h1>
+        <p class="muted">Celebrate literature, art and culture. View live results, leaderboards, and the gallery.</p>
+        <div class="quick-links">
+          <a href="results.html">View Results</a>
+          <a href="leaderboard.html">Leaderboard</a>
+          <a href="gallery.html">Gallery</a>
+          <a href="events.html">Events</a>
+        </div>
+      </div>
+      <div style="flex:1;max-width:420px">
+        <img src="images/main-poster.jpg" alt="poster" style="width:100%;border-radius:12px;box-shadow:var(--shadow)">
       </div>
     </div>
   </section>
 
-  <!-- ABOUT -->
-  <section class="about">
-    <div class="container">
-      <h2>About the Event</h2>
-      <p>
-        Sahithyotsav is a vibrant cultural festival organized by SSF Koottilangadi Sector,
-        showcasing talents in literature, arts, and performance across various categories.
-      </p>
+  <div class="container" style="padding:36px 20px">
+    <div class="card">
+      <h2>About</h2>
+      <p>SSF Koottilangadi Sahityotsav is a celebration of arts and literature. This site provides live results and a media gallery maintained by our team.</p>
     </div>
-  </section>
+  </div>
 
-  <!-- QUICK LINKS -->
-  <section class="quick-links">
-    <div class="container">
-      <div class="links-grid">
-        <a href="results.html" class="link-card">
-          <i class="fas fa-trophy"></i>
-          <span>View Results</span>
-        </a>
-        <a href="leaderboard.html" class="link-card">
-          <i class="fas fa-chart-bar"></i>
-          <span>Leaderboard</span>
-        </a>
-        <a href="gallery.html" class="link-card">
-          <i class="fas fa-images"></i>
-          <span>Gallery</span>
-        </a>
-        <a href="events.html" class="link-card">
-          <i class="fas fa-calendar-alt"></i>
-          <span>View Schedule</span>
-        </a>
-        <a href="donate.html" class="link-card">
-          <i class="fas fa-heart"></i>
-          <span>Support Us</span>
-        </a>
-      </div>
-    </div>
-  </section>
-
+  <footer class="footer">&copy; SSF Koottilangadi</footer>
   <script src="script.js"></script>
 </body>
 </html>

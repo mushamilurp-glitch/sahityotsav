@@ -162,12 +162,7 @@
   </section>
 
   <script>
-    // ===== ADMIN CREDENTIALS (Change these values as needed) =====
-    const ADMIN_CREDENTIALS = {
-      username: 'ktlngdisah@gmail.com',
-      password: 'admin@123'
-    };
-    // ============================================================
+    const API_BASE = window.location.protocol === 'file:' ? 'http://localhost:3000/api' : `${window.location.origin}/api`;
 
     const loginForm = document.getElementById('loginForm');
     const loginBtn = document.getElementById('loginBtn');
@@ -183,37 +178,54 @@
     }
 
     // Check if already logged in
-    if (localStorage.getItem('adminLoggedIn') === 'true') {
+    if (localStorage.getItem('adminLoggedIn') === 'true' && localStorage.getItem('authToken')) {
       window.location.href = 'admin.html';
     }
 
-    function login(email, password) {
+    async function login(email, password) {
       loginBtn.disabled = true;
       loginBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Logging in...';
 
-      // Simulate a small delay for better UX
-      setTimeout(() => {
-        try {
-          // Validate credentials against hardcoded credentials
-          if (email.trim() === ADMIN_CREDENTIALS.username && password === ADMIN_CREDENTIALS.password) {
-            // Store login state in localStorage
-            localStorage.setItem('adminLoggedIn', 'true');
-            localStorage.setItem('adminLoginTime', new Date().getTime().toString());
+      try {
+        const response = await fetch(`${API_BASE}/auth/login`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({ email, password })
+        });
 
-            showMessage('Login successful! Redirecting...', false);
-            setTimeout(() => {
-              window.location.href = 'admin.html';
-            }, 1000);
-          } else {
-            throw new Error('Invalid email or password.');
-          }
-        } catch (error) {
-          console.error('Login error:', error);
-          showMessage(error.message, true);
-          loginBtn.disabled = false;
-          loginBtn.innerHTML = '<i class="fas fa-sign-in-alt"></i> Login';
+        const responseText = await response.text();
+        let data = null;
+
+        try {
+          data = responseText ? JSON.parse(responseText) : null;
+        } catch (parseError) {
+          console.warn('Login endpoint returned non-JSON response:', responseText);
         }
-      }, 500);
+
+        if (!response.ok) {
+          throw new Error((data && data.error) ? data.error : responseText || 'Invalid email or password.');
+        }
+
+        if (!data || !data.token) {
+          throw new Error('Login response is invalid.');
+        }
+
+        localStorage.setItem('adminLoggedIn', 'true');
+        localStorage.setItem('adminLoginTime', new Date().getTime().toString());
+        localStorage.setItem('authToken', data.token);
+
+        showMessage('Login successful! Redirecting...', false);
+        setTimeout(() => {
+          window.location.href = 'admin.html';
+        }, 1000);
+      } catch (error) {
+        console.error('Login error:', error);
+        showMessage(error.message || 'Unable to login. Please try again.', true);
+        loginBtn.disabled = false;
+        loginBtn.innerHTML = '<i class="fas fa-sign-in-alt"></i> Login';
+      }
     }
 
     loginForm.addEventListener('submit', (e) => {
