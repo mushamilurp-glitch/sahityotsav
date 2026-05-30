@@ -115,7 +115,8 @@ input::placeholder,textarea::placeholder{color:rgba(230,240,242,0.45)}
   .donate-section{padding:36px 0}
   .donate-section h2{font-size:1.8rem}
   .donate-section .lead{max-width:100%}
-  .qr-image{max-width:100%;height:auto}
+  .qr-card{gap:16px}
+  .qr-image{max-width:100%;width:100%}
   .hero-content h1{font-size:2.3rem}
 }
 

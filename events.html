@@ -1,0 +1,222 @@
+<!doctype html>
+<html lang="en">
+<head>
+	<meta charset="utf-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1" />
+	<title>Events — Sahityolsav</title>
+	<link rel="stylesheet" href="style.css">
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+	<style>
+		/* Small local styles for the schedule page (use theme variables) */
+		.stages { display:flex; gap:8px; flex-wrap:wrap; margin:16px 0; }
+		.stage-btn { padding:8px 12px; border-radius:6px; border:1px solid var(--border); background:var(--card-bg); color:var(--text); cursor:pointer; }
+		.stage-btn.active { background:var(--accent); color:#022; border-color:var(--accent-dark); }
+		.schedule { margin-top:12px; }
+		table.schedule-table { width:100%; border-collapse:collapse; }
+		table.schedule-table th, table.schedule-table td { padding:10px; border-bottom:1px solid var(--border); text-align:left; color:var(--text); }
+		tr.ongoing { background: rgba(255,183,3,0.08); }
+		tr.upcoming { background: rgba(14,115,232,0.06); }
+		.badge { font-size:12px; padding:4px 6px; border-radius:4px; margin-left:8px; }
+		.badge.current { background:#ffb703; color:#000; }
+		.badge.next { background:#90caf9; color:#022f66; }
+		.no-events { color:var(--muted); padding:12px 0; }
+	</style>
+</head>
+<body>
+	<nav class="navbar">
+		<div class="navbar-left">
+			<img src="images/logo.png" class="logo1" alt="Logo">
+			<img src="images/sah-en.png" class="logo2" alt="Sahithyotsav">
+		</div>
+		<ul class="nav-links" id="navLinks">
+			<li><a href="index.html">Home</a></li>
+			<li><a href="results.html">Results</a></li>
+			<li><a href="leaderboard.html">Leaderboard</a></li>
+			<li><a href="gallery.html">Gallery</a></li>
+			<li><a href="events.html">Events</a></li>
+			<li><a href="donate.html">Donate</a></li>
+			<li><a href="login.html">Admin</a></li>
+		</ul>
+		<button id="themeToggle" class="theme-toggle" title="Toggle theme"><span class="dot"></span></button>
+		<button id="hamburger" class="hamburger" aria-label="Menu" aria-expanded="false">☰</button>
+	</nav>
+
+	<main class="container" style="padding:28px 20px">
+		<h1>Program Schedule</h1>
+
+		<div>
+			<div class="stages" id="stages"></div>
+		</div>
+
+		<section class="schedule card" style="margin-top:18px;padding:18px">
+			<h2 id="stage-title"></h2>
+			<div id="schedule-container"></div>
+		</section>
+	</main>
+
+	<script>
+		// Stage names and sample schedule data (times are in local time HH:MM)
+		const STAGES = ["SOULSCAPE","CATHARSIS","RESONANCE","SOLACE","ECLIPSE","WHISPERS"];
+
+		// Example schedule: user can edit these entries or replace them with dynamic data later
+		const SCHEDULES = {
+			SOULSCAPE: [
+				{name: 'General Qaseeda Recitation', start: '07:30', end: '08:10'},
+				{name: 'General Moulid Recitation', start: '08:10', end: '08:50'},
+				{name: 'Senior Elocution Malayalam', start: '08:50', end: '09:10'},
+				{name: 'General Nasheeda', start: '09:10', end: '09:50'},
+				{name: 'Junior Elocution Malayalam', start: '09:50', end: '10:05'},
+				{name: 'HSS Bhakthi Gaanam', start: '10:05', end: '10:25'},
+                {name: 'LP Madh Song', start: '10:25', end: '11:05'},
+                {name: 'UP Elocution', start: '11:05', end: '11:40'},
+                {name: 'LP Story Telling', start: '11:40', end: '12:15'},
+                {name: 'UP Mappilappattu', start: '12:15', end: '13:05'},
+                {name: 'LP Elocution', start: '13:05', end: '13:40'},
+                {name: 'HS Madh Song', start: '14:00', end: '14:50'},
+                {name: 'HS Elocution Malayalam', start: '14:50', end: '15:25'},
+                {name: 'HS Mappilappattu', start: '15:25', end: '16:15'},
+                {name: 'Junior Mappilappattu', start: '16:15', end: '16:45'},
+                {name: 'General Group Song Cat - B', start: '16:45', end: '17:20'},
+                {name: 'General Group Song Cat - A', start: '17:20', end: '17:50'},
+                {name: 'Closing Ceremony', start: '19:00', end: '20:30'},
+
+			],
+			CATHARSIS: [
+				{name: 'HSS Elocution Malayalam', start: '10:00', end: '10:25'},
+				{name: 'Senior Hamd Urdu', start: '10:25', end: '10:45'},
+				{name: 'HSS Poem Recitation Urdu', start: '10:45', end: '10:55'},
+                {name: 'HS Poem Recitation Urdu', start: '10:55', end: '11:20'},
+                {name: 'HS Poem Recitation Arabic', start: '11:20', end: '12:05'},
+                {name: 'General Malappattu', start: '12:05', end: '12:40'},
+                {name: 'HS Elocution English', start: '12:40', end: '13:10'},
+                {name: 'HS Poem Recitation Malayalam', start: '13:10', end: '13:40'},
+                {name: 'Junior Elocution English', start: '14:00', end: '14:10'},
+                {name: 'Senior Elocution English', start: '14:10', end: '14:15'},
+                {name: 'Senior Poem Recitation English', start: '14:15', end: '14:20'},
+                {name: 'General Viplava Gaanam', start: '14:20', end: '14:55'},
+                {name: 'Senior Mappilappattu', start: '14:55', end: '15:20'},
+                {name: 'Junior Elocution Arabic', start: '15:20', end: '15:25'},
+                {name: 'Senior Musha-ara Alfiyya', start: '15:25', end: '16:00'},
+			],
+			RESONANCE: [
+				{name: 'UP Quiz', start: '10:00', end: '10:15'},
+				{name: 'UP Book Test', start: '10:15', end: '10:30'},
+				{name: 'LP Quiz', start: '10:30', end: '10:45'},
+                {name: 'LP Book Test', start: '10:45', end: '11:00'},
+                {name: 'UP Ganitha Keli', start: '11:00', end: '11:15'},
+                {name: 'HSS Quiz', start: '11:15', end: '11:30'},
+                {name: 'HSS Book Test', start: '11:30', end: '11:45'},
+                {name: 'Junior Quiz', start: '11:45', end: '12:00'},
+                {name: 'Junior Book Test', start: '12:00', end: '12:15'},
+                {name: 'Senior Quiz', start: '12:15', end: '12:30'},
+                {name: 'HS Language Game English', start: '12:30', end: '12:40'},
+                {name: 'Senior Book Test', start: '12:30', end: '12:45'},
+                {name: 'General Risala Quiz', start: '12:45', end: '13:00'},
+                {name: 'LP Bhasha Keli', start: '14:00', end: '14:10'},
+                {name: 'UP Spelling Bee', start: '14:10', end: '14:20'},
+                {name: 'HS Quiz', start: '14:20', end: '14:35'},
+                {name: 'HS Book Test', start: '14:35', end: '14:50'},
+                {name: 'UP Sudoku', start: '14:50', end: '15:20'},
+			],
+			SOLACE: [
+				{name: '', start: '09:15', end: '10:00'},
+				{name: '', start: '10:15', end: '11:30'},
+			],
+			ECLIPSE: [
+				{name: '', start: '14:00', end: '15:00'},
+				{name: '', start: '15:15', end: '16:00'},
+			],
+			WHISPERS: [
+				{name: '', start: '16:00', end: '17:00'},
+				{name: '', start: '17:15', end: '18:00'},
+			]
+		};
+
+		const stagesEl = document.getElementById('stages');
+		const scheduleContainer = document.getElementById('schedule-container');
+		const stageTitle = document.getElementById('stage-title');
+
+		let selectedStage = localStorage.getItem('selectedStage') || 'SOULSCAPE';
+
+		function renderStageButtons() {
+			stagesEl.innerHTML = '';
+			STAGES.forEach(stage => {
+				const btn = document.createElement('button');
+				btn.className = 'stage-btn' + (stage === selectedStage ? ' active' : '');
+				btn.textContent = stage;
+				btn.addEventListener('click', () => {
+					selectedStage = stage;
+					localStorage.setItem('selectedStage', stage);
+					update();
+				});
+				stagesEl.appendChild(btn);
+			});
+		}
+
+		function parseTimeToDate(timeStr) {
+			const [hh, mm] = timeStr.split(':').map(Number);
+			const d = new Date();
+			d.setHours(hh, mm, 0, 0);
+			return d;
+		}
+
+		function buildScheduleTable(stage) {
+			const events = (SCHEDULES[stage] || []).slice();
+			if (!events.length) {
+				return '<div class="no-events">No scheduled programs for this stage.</div>';
+			}
+
+			// compute date objects for today
+			const now = new Date();
+			const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+
+			const rows = events.map(ev => {
+				const start = new Date(today);
+				const [sh, sm] = ev.start.split(':').map(Number);
+				start.setHours(sh, sm, 0, 0);
+				const end = new Date(today);
+				const [eh, em] = ev.end.split(':').map(Number);
+				end.setHours(eh, em, 0, 0);
+				return { ...ev, startDate: start, endDate: end };
+			});
+
+			// find current and next
+			let currentIndex = -1;
+			for (let i = 0; i < rows.length; i++) {
+				if (now >= rows[i].startDate && now < rows[i].endDate) { currentIndex = i; break; }
+			}
+			let nextIndex = rows.findIndex((r, i) => r.startDate > now);
+
+			// if nothing upcoming and nothing current, nextIndex remains -1
+
+			let html = '<table class="schedule-table"><thead><tr><th>Program</th><th>Start</th><th>End</th></tr></thead><tbody>';
+			rows.forEach((r, i) => {
+				const classes = [];
+				let badge = '';
+				if (i === currentIndex) { classes.push('ongoing'); badge = '<span class="badge current">Ongoing</span>'; }
+				else if (i === nextIndex) { classes.push('upcoming'); badge = '<span class="badge next">Next</span>'; }
+				html += `<tr class="${classes.join(' ')}"><td>${r.name} ${badge}</td><td>${r.start}</td><td>${r.end}</td></tr>`;
+			});
+			html += '</tbody></table>';
+			return html;
+		}
+
+		function update() {
+			renderStageButtons();
+			stageTitle.textContent = selectedStage;
+			scheduleContainer.innerHTML = buildScheduleTable(selectedStage);
+		}
+
+		// refresh every 20 seconds to update highlighting
+		setInterval(() => {
+			// Re-render table only (keeps selected state and buttons intact)
+			scheduleContainer.innerHTML = buildScheduleTable(selectedStage);
+		}, 20000);
+
+		// initial render
+		renderStageButtons();
+		update();
+
+	</script>
+	<script src="script.js"></script>
+	<footer class="footer">&copy; SSF Koottilangadi Sector Committee</footer>
