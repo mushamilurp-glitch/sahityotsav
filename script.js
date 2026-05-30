@@ -38,7 +38,8 @@ const setTheme = (theme) => {
 
 const initializeTheme = () => {
   const savedTheme = localStorage.getItem('theme');
-  const defaultTheme = window.matchMedia && window.matchMedia('(prefers-color-scheme:dark)').matches ? 'dark' : 'light';
+  // Force default to dark unless the user has a saved preference
+  const defaultTheme = 'dark';
   setTheme(savedTheme || defaultTheme);
 };
 
