@@ -173,7 +173,7 @@ th,td{padding:10px;border-bottom:1px solid rgba(255,255,255,0.03)}
 }
 
 @media (max-width:600px){
-  .theme-logo,.theme-icons{max-height:48px}
+  .theme-logo,.theme-icons{max-height:35px}
   .theme-header{gap:10px}
   .theme-highlight{padding:14px}
   .theme-card{padding:16px}
