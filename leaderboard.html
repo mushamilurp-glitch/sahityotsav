@@ -21,8 +21,6 @@
     .team-info { flex: 1; }
     .team-name { font-size: 1.2rem; font-weight: 600; margin-bottom: 5px; }
     .team-points { font-size: 1rem; color: var(--text-secondary); }
-    .loading { text-align: center; padding: 40px; color: var(--text-secondary); }
-    .loading i { font-size: 2rem; margin-bottom: 10px; }
   </style>
 </head>
 <body>
@@ -49,79 +47,108 @@
     <div class="container">
       <div class="leaderboard-header">
         <h1>Team Leaderboard</h1>
-        <p>Current standings of all participating teams based on competition results.</p>
+        <p>Current standings of all participating teams based on declared competition results.</p>
       </div>
 
       <div class="leaderboard-card">
         <div id="resultsDeclared" class="results-declared">
-          <h2><i class="fas fa-trophy"></i> Results Declared: <span id="declaredCount">--</span></h2>
+          <h2><i class="fas fa-trophy"></i> Results Declared: 5</h2>
         </div>
 
-        <div id="loadingSpinner" class="loading">
-          <i class="fas fa-spinner fa-spin"></i>
-          <p>Loading leaderboard...</p>
-        </div>
+        <div id="leaderboardList" class="leaderboard-list">
+          
+          <div class="leaderboard-item">
+            <div class="rank">🥇</div>
+            <div class="team-info">
+              <div class="team-name">Padinhattumuri East</div>
+              <div class="team-points">46 points</div>
+            </div>
+          </div>
 
-        <div id="leaderboardList" class="leaderboard-list" style="display: none;">
-          <!-- Leaderboard items will be inserted here -->
+          <div class="leaderboard-item">
+            <div class="rank">🥈</div>
+            <div class="team-info">
+              <div class="team-name">Perinthattiri</div>
+              <div class="team-points">34 points</div>
+            </div>
+          </div>
+
+          <div class="leaderboard-item">
+            <div class="rank">🥉</div>
+            <div class="team-info">
+              <div class="team-name">Padinhattumuri Town</div>
+              <div class="team-points">30 points</div>
+            </div>
+          </div>
+
+          <div class="leaderboard-item">
+            <div class="rank">🥉</div>
+            <div class="team-info">
+              <div class="team-name">Kulapparamb</div>
+              <div class="team-points">30 points</div>
+            </div>
+          </div>
+
+          <div class="leaderboard-item">
+            <div class="rank"></div>
+            <div class="team-info">
+              <div class="team-name">Kadoopuram</div>
+              <div class="team-points">29 points</div>
+            </div>
+          </div>
+
+          <div class="leaderboard-item">
+            <div class="rank"></div>
+            <div class="team-info">
+              <div class="team-name">Padinhattumuri West</div>
+              <div class="team-points">11 points</div>
+            </div>
+          </div>
+
+          <div class="leaderboard-item">
+            <div class="rank"></div>
+            <div class="team-info">
+              <div class="team-name">Pallipuram</div>
+              <div class="team-points">0 points</div>
+            </div>
+          </div>
+
+          <div class="leaderboard-item">
+            <div class="rank"></div>
+            <div class="team-info">
+              <div class="team-name">Kooottilangadi</div>
+              <div class="team-points">0 points</div>
+            </div>
+          </div>
+
+          <div class="leaderboard-item">
+            <div class="rank"></div>
+            <div class="team-info">
+              <div class="team-name">Cheloor</div>
+              <div class="team-points">0 points</div>
+            </div>
+          </div>
+
+          <div class="leaderboard-item">
+            <div class="rank"></div>
+            <div class="team-info">
+              <div class="team-name">Kuttamanna</div>
+              <div class="team-points">0 points</div>
+            </div>
+          </div>
+
+          <div class="leaderboard-item">
+            <div class="rank"></div>
+            <div class="team-info">
+              <div class="team-name">Unnamthala</div>
+              <div class="team-points">0 points</div>
+            </div>
+          </div>
+
         </div>
       </div>
     </div>
   </section>
-
-  <script type="module">
-    // API Base URL - change this to your backend URL
-    const API_BASE = '/api';
-
-    const loadingSpinner = document.getElementById('loadingSpinner');
-    const leaderboardList = document.getElementById('leaderboardList');
-    const declaredCount = document.getElementById('declaredCount');
-
-    async function loadLeaderboard() {
-      try {
-        // Fetch leaderboard data from API
-        const response = await fetch(`${API_BASE}/leaderboard`);
-        if (!response.ok) {
-          throw new Error('Failed to fetch leaderboard');
-        }
-
-        const data = await response.json();
-
-        // Update results declared count
-        declaredCount.textContent = data.resultsDeclared || 0;
-
-        // Clear existing content
-        leaderboardList.innerHTML = '';
-
-        // Display teams
-        data.leaderboard.forEach((team) => {
-          const item = document.createElement('div');
-          item.className = 'leaderboard-item';
-
-          item.innerHTML = `
-            <div class="rank">${team.rank}</div>
-            <div class="team-info">
-              <div class="team-name">${team.team}</div>
-              <div class="team-points">${team.points} points</div>
-            </div>
-          `;
-
-          leaderboardList.appendChild(item);
-        });
-
-        // Show leaderboard and hide loading
-        loadingSpinner.style.display = 'none';
-        leaderboardList.style.display = 'flex';
-
-      } catch (error) {
-        console.error('Error loading leaderboard:', error);
-        loadingSpinner.innerHTML = '<i class="fas fa-exclamation-triangle"></i><p>Error loading leaderboard. Please refresh the page.</p>';
-      }
-    }
-
-    // Load leaderboard on page load
-    loadLeaderboard();
-  </script>
 
   <footer class="footer">&copy; SSF Koottilangadi Sector Committee</footer>
   <script src="script.js"></script>
